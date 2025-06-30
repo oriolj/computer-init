@@ -50,6 +50,7 @@ packages:
       - firefox
       - chromium
       - discord
+      - gnome-extra
     darwin:
       - coreutils
       - gnu-tar
