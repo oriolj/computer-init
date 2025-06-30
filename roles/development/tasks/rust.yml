@@ -1,0 +1,40 @@
+---
+- name: Check if Rust is installed
+  stat:
+    path: "{{ home_dir }}/.cargo/bin/rustc"
+  register: rust_installed
+  become: false
+
+- name: Download Rust installer
+  get_url:
+    url: https://sh.rustup.rs
+    dest: /tmp/rustup.sh
+    mode: '0755'
+  when: not rust_installed.stat.exists
+  become: false
+
+- name: Install Rust
+  shell: /tmp/rustup.sh -y --no-modify-path
+  when: not rust_installed.stat.exists
+  become: false
+
+- name: Add Rust to PATH
+  blockinfile:
+    path: "{{ home_dir }}/.zshrc"
+    block: |
+      # Rust programming language
+      source "$HOME/.cargo/env"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - Rust"
+    create: yes
+  become: false
+
+- name: Install common Rust tools
+  shell: |
+    source {{ home_dir }}/.cargo/env
+    cargo install {{ item }}
+  loop:
+    - cargo-edit
+    - cargo-watch
+    - cargo-audit
+  become: false
+  when: rust_installed.stat.exists or not rust_installed.stat.exists

@@ -1,0 +1,42 @@
+" {{ ansible_managed }}
+" Neovim configuration
+
+" Load vim configuration
+set runtimepath^=~/.vim runtimepath+=~/.vim/after
+let &packpath=&runtimepath
+source ~/.vimrc
+
+" Neovim specific settings
+set inccommand=split         " Show live preview of substitution
+
+" Better terminal integration
+if has('nvim')
+  tnoremap <Esc> <C-\><C-n>
+  tnoremap <C-v><Esc> <Esc>
+endif
+
+" Use system clipboard
+set clipboard+=unnamedplus
+
+" Python providers
+let g:python3_host_prog = '/usr/bin/python3'
+
+" Faster startup
+let g:loaded_python_provider = 0
+let g:loaded_ruby_provider = 0
+let g:loaded_perl_provider = 0
+let g:loaded_node_provider = 0
+
+" Plugin management with vim-plug (if installed)
+if filereadable(expand("~/.local/share/nvim/site/autoload/plug.vim"))
+  call plug#begin('~/.local/share/nvim/plugged')
+  
+  " Add plugins here
+  " Plug 'tpope/vim-fugitive'
+  " Plug 'preservim/nerdtree'
+  " Plug 'vim-airline/vim-airline'
+  " Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+  " Plug 'junegunn/fzf.vim'
+  
+  call plug#end()
+endif

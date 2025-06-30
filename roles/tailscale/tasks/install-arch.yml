@@ -1,0 +1,13 @@
+---
+- name: Install Tailscale from AUR
+  aur:
+    name: tailscale
+    state: present
+  become: false
+  when: use_aur | default(false)
+
+- name: Install Tailscale from official repository
+  pacman:
+    name: tailscale
+    state: present
+  when: not (use_aur | default(false))

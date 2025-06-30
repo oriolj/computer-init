@@ -1,0 +1,15 @@
+---
+- name: Install Syncthing from COPR repository
+  dnf:
+    name: 'dnf-command(copr)'
+    state: present
+
+- name: Enable Syncthing COPR repository
+  command: dnf copr enable -y decathorpe/syncthing
+  args:
+    creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:decathorpe:syncthing.repo
+
+- name: Install Syncthing
+  dnf:
+    name: syncthing
+    state: present

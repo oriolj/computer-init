@@ -1,0 +1,60 @@
+---
+- name: Check if Tailscale is already installed
+  command: which tailscale
+  register: tailscale_check
+  changed_when: false
+  failed_when: false
+
+- name: Install Tailscale (Debian/Ubuntu)
+  include_tasks: install-debian.yml
+  when: 
+    - ansible_os_family == 'Debian'
+    - tailscale_check.rc != 0
+
+- name: Install Tailscale (RedHat/Fedora)
+  include_tasks: install-redhat.yml
+  when: 
+    - ansible_os_family == 'RedHat'
+    - tailscale_check.rc != 0
+
+- name: Install Tailscale (Arch)
+  include_tasks: install-arch.yml
+  when: 
+    - ansible_os_family == 'Archlinux'
+    - tailscale_check.rc != 0
+
+- name: Install Tailscale (macOS)
+  include_tasks: install-macos.yml
+  when: 
+    - ansible_os_family == 'Darwin'
+    - tailscale_check.rc != 0
+
+- name: Start and enable Tailscale service
+  systemd:
+    name: tailscaled
+    state: started
+    enabled: yes
+  when: 
+    - ansible_os_family != 'Darwin'
+    - ansible_service_mgr == 'systemd'
+
+- name: Check Tailscale status
+  command: tailscale status
+  register: tailscale_status
+  changed_when: false
+  failed_when: false
+
+- name: Authenticate Tailscale
+  command: tailscale up --authkey="{{ tailscale_auth_key | default(vault_tailscale_auth_key) }}"
+  when:
+    - tailscale_auth_key is defined or vault_tailscale_auth_key is defined
+    - tailscale_status.rc != 0 or "Logged out" in tailscale_status.stdout
+  no_log: true
+
+- name: Configure Tailscale options
+  command: tailscale set {{ item }}
+  loop:
+    - "--accept-routes={{ tailscale_accept_routes | default('true') }}"
+    - "--accept-dns={{ tailscale_accept_dns | default('true') }}"
+  when: tailscale_status.rc == 0
+  changed_when: false

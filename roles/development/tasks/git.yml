@@ -1,0 +1,60 @@
+---
+- name: Configure Git user name
+  git_config:
+    name: user.name
+    scope: global
+    value: "{{ git_user_name | default(user) }}"
+  become: false
+  when: git_user_name is defined or user is defined
+
+- name: Configure Git user email
+  git_config:
+    name: user.email
+    scope: global
+    value: "{{ git_user_email }}"
+  become: false
+  when: git_user_email is defined
+
+- name: Configure Git default branch
+  git_config:
+    name: init.defaultBranch
+    scope: global
+    value: main
+  become: false
+
+- name: Configure Git aliases
+  git_config:
+    name: "alias.{{ item.key }}"
+    scope: global
+    value: "{{ item.value }}"
+  loop:
+    - { key: 'co', value: 'checkout' }
+    - { key: 'br', value: 'branch' }
+    - { key: 'ci', value: 'commit' }
+    - { key: 'st', value: 'status' }
+    - { key: 'unstage', value: 'reset HEAD --' }
+    - { key: 'last', value: 'log -1 HEAD' }
+    - { key: 'visual', value: '!gitk' }
+    - { key: 'lg', value: "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit" }
+  become: false
+
+- name: Configure Git pull strategy
+  git_config:
+    name: pull.rebase
+    scope: global
+    value: "false"
+  become: false
+
+- name: Configure Git push default
+  git_config:
+    name: push.default
+    scope: global
+    value: current
+  become: false
+
+- name: Configure Git credential helper
+  git_config:
+    name: credential.helper
+    scope: global
+    value: "{{ 'osxkeychain' if ansible_os_family == 'Darwin' else 'cache --timeout=3600' }}"
+  become: false

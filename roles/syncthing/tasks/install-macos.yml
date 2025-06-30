@@ -1,0 +1,12 @@
+---
+- name: Install Syncthing via Homebrew
+  homebrew:
+    name: syncthing
+    state: present
+  become: false
+
+- name: Install Syncthing service via brew services
+  shell: brew services start syncthing
+  become: false
+  register: brew_service_result
+  changed_when: "'Successfully started' in brew_service_result.stdout"

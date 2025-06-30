@@ -1,0 +1,112 @@
+---
+- name: Check if dotfiles repository is configured
+  debug:
+    msg: "Dotfiles repository: {{ dotfiles_repo | default('Not configured') }}"
+  
+- name: Clone dotfiles repository
+  git:
+    repo: "{{ dotfiles_repo }}"
+    dest: "{{ dotfiles_path }}"
+    version: "{{ dotfiles_branch }}"
+    update: yes
+  become: false
+  when: 
+    - dotfiles_repo is defined
+    - dotfiles_repo != ""
+
+- name: Create dotfiles directory if not using repo
+  file:
+    path: "{{ dotfiles_path }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  become: false
+  when: 
+    - dotfiles_repo is not defined or dotfiles_repo == ""
+
+- name: Deploy custom vimrc
+  template:
+    src: vimrc.j2
+    dest: "{{ home_dir }}/.vimrc"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0644'
+    backup: yes
+  become: false
+  when: deploy_default_configs | default(true)
+
+- name: Deploy custom tmux.conf
+  template:
+    src: tmux.conf.j2
+    dest: "{{ home_dir }}/.tmux.conf"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0644'
+    backup: yes
+  become: false
+  when: deploy_default_configs | default(true)
+
+- name: Deploy custom gitignore_global
+  template:
+    src: gitignore_global.j2
+    dest: "{{ home_dir }}/.gitignore_global"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0644'
+  become: false
+
+- name: Configure Git to use global gitignore
+  git_config:
+    name: core.excludesfile
+    scope: global
+    value: "{{ home_dir }}/.gitignore_global"
+  become: false
+
+- name: Create config directories
+  file:
+    path: "{{ home_dir }}/.config/{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  loop:
+    - nvim
+    - htop
+  become: false
+
+- name: Deploy Neovim init.vim
+  template:
+    src: init.vim.j2
+    dest: "{{ home_dir }}/.config/nvim/init.vim"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0644'
+    backup: yes
+  become: false
+  when: deploy_default_configs | default(true)
+
+- name: Check for GNU Stow
+  command: which stow
+  register: stow_check
+  changed_when: false
+  failed_when: false
+
+- name: Install GNU Stow
+  package:
+    name: stow
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  when: 
+    - stow_check.rc != 0
+    - use_stow | default(false)
+
+- name: Stow dotfiles
+  shell: |
+    cd {{ dotfiles_path }}
+    stow -v -R -t {{ home_dir }} {{ item }}
+  loop: "{{ dotfiles_stow_folders | default([]) }}"
+  become: false
+  when: 
+    - use_stow | default(false)
+    - dotfiles_stow_folders is defined

@@ -1,0 +1,79 @@
+---
+- name: Computer Initialization Playbook
+  hosts: localhost
+  gather_facts: yes
+  
+  pre_tasks:
+    - name: Set user and home directory
+      set_fact:
+        user: "{{ lookup('env', 'USER') }}"
+        home_dir: "{{ lookup('env', 'HOME') }}"
+      tags: always
+      
+    - name: Debug user information
+      debug:
+        msg:
+          - "ansible_user_id: {{ ansible_user_id }}"
+          - "ansible_env.HOME: {{ ansible_env.HOME | default('not set') }}"
+          - "ENV USER: {{ lookup('env', 'USER') }}"
+          - "ENV HOME: {{ lookup('env', 'HOME') }}"
+          - "Final user: {{ user }}"
+          - "Final home_dir: {{ home_dir }}"
+      tags: always
+
+    - name: Display initialization information
+      debug:
+        msg: 
+          - "Starting computer initialization for {{ ansible_hostname }}"
+          - "Operating System: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+          - "Architecture: {{ ansible_architecture }}"
+          - "User: {{ user }}"
+          - "Home: {{ home_dir }}"
+      tags: always
+
+    - name: Ensure package manager cache is updated
+      package:
+        update_cache: yes
+      become: yes
+      when: ansible_os_family != 'Darwin'
+      tags: always
+
+  roles:
+    - { role: base, tags: ['base', 'system'] }
+    - { role: shell, tags: ['shell', 'zsh'] }
+    - { role: ssh, tags: ['ssh', 'security'] }
+    - { role: development, tags: ['development', 'dev', 'tools'] }
+    - { role: dotfiles, tags: ['dotfiles', 'config'] }
+    - { role: extras, tags: ['extras', 'aur'] }
+    - { role: tailscale, tags: ['tailscale', 'vpn'], when: install_tailscale | default(true) }
+    - { role: syncthing, tags: ['syncthing', 'sync'], when: install_syncthing | default(true) }
+
+  post_tasks:
+    - name: Display completion message
+      debug:
+        msg:
+          - "Computer initialization completed successfully!"
+          - "You may need to log out and back in for some changes to take effect."
+          - "Run 'source ~/.zshrc' to reload shell configuration."
+      tags: always
+
+    - name: Check services status
+      command: systemctl is-active {{ item }}
+      loop:
+        - sshd
+        - tailscaled
+        - docker
+      register: service_status
+      changed_when: false
+      failed_when: false
+      when: ansible_service_mgr == 'systemd'
+      tags: status
+
+    - name: Display service status
+      debug:
+        msg: "{{ item.item }}: {{ item.stdout }}"
+      loop: "{{ service_status.results }}"
+      when: 
+        - service_status is defined
+        - ansible_service_mgr == 'systemd'
+      tags: status

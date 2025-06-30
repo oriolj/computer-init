@@ -1,0 +1,16 @@
+---
+- name: Check if yay is available
+  command: which yay
+  register: yay_available
+  changed_when: false
+  failed_when: false
+
+- name: Install AUR packages with yay
+  shell: yay -S --noconfirm {{ item }}
+  loop: "{{ aur_packages }}"
+  become: false
+  when: 
+    - yay_available.rc == 0
+    - aur_packages is defined
+  register: aur_install
+  changed_when: "'Installing' in aur_install.stdout"

@@ -1,0 +1,120 @@
+" {{ ansible_managed }}
+
+" Basic Settings
+set nocompatible              " Be iMproved, required
+set encoding=utf-8            " UTF-8 encoding
+set number                    " Show line numbers
+set relativenumber           " Show relative line numbers
+set cursorline               " Highlight current line
+set showmatch                " Highlight matching brackets
+set wildmenu                 " Visual autocomplete for command menu
+set lazyredraw               " Redraw only when needed
+set showmode                 " Show current mode
+set ruler                    " Show line and column number
+set showcmd                  " Show command in bottom bar
+
+" Indentation
+set tabstop=4                " Number of visual spaces per TAB
+set softtabstop=4            " Number of spaces in tab when editing
+set shiftwidth=4             " Number of spaces for autoindent
+set expandtab                " Tabs are spaces
+set autoindent               " Auto indent
+set smartindent              " Smart indent
+filetype plugin indent on    " Load filetype-specific indent files
+
+" Search
+set incsearch                " Search as characters are entered
+set hlsearch                 " Highlight matches
+set ignorecase               " Case insensitive search
+set smartcase                " But case sensitive when uppercase present
+
+" Folding
+set foldenable               " Enable folding
+set foldlevelstart=10        " Open most folds by default
+set foldnestmax=10           " 10 nested fold max
+set foldmethod=indent        " Fold based on indent level
+
+" UI Config
+set wrap                     " Wrap lines
+set linebreak                " Break lines at word boundaries
+set scrolloff=5              " Keep 5 lines below and above the cursor
+set sidescrolloff=10         " Keep 10 columns to the left and right
+syntax enable                " Enable syntax highlighting
+set background=dark          " Dark background
+set t_Co=256                 " 256 colors
+
+" Backup and Undo
+set backup                   " Keep backup files
+set backupdir=~/.vim/backup  " Where to store backups
+set undofile                 " Persistent undo
+set undodir=~/.vim/undo      " Where to store undo files
+set directory=~/.vim/swap    " Where to store swap files
+
+" Create directories if they don't exist
+silent !mkdir -p ~/.vim/backup ~/.vim/undo ~/.vim/swap
+
+" Key Mappings
+let mapleader=" "            " Leader key is space
+
+" Easy window navigation
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Clear search highlighting
+nnoremap <leader><space> :nohlsearch<CR>
+
+" Save file
+nnoremap <leader>w :w<CR>
+
+" Quit
+nnoremap <leader>q :q<CR>
+
+" Toggle relative line numbers
+nnoremap <leader>n :set relativenumber!<CR>
+
+" Move lines up and down
+nnoremap <A-j> :m .+1<CR>==
+nnoremap <A-k> :m .-2<CR>==
+vnoremap <A-j> :m '>+1<CR>gv=gv
+vnoremap <A-k> :m '<-2<CR>gv=gv
+
+" Better indentation
+vnoremap < <gv
+vnoremap > >gv
+
+" Status Line
+set laststatus=2             " Always show status line
+set statusline=
+set statusline+=%#PmenuSel#
+set statusline+=%{getcwd()}
+set statusline+=%#LineNr#
+set statusline+=\ %f
+set statusline+=%m
+set statusline+=%=
+set statusline+=%#CursorColumn#
+set statusline+=\ %y
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\[%{&fileformat}\]
+set statusline+=\ %l:%c
+set statusline+=\ %p%%
+set statusline+=\ 
+
+" File Type Specific Settings
+autocmd FileType python setlocal shiftwidth=4 softtabstop=4 expandtab
+autocmd FileType javascript setlocal shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType typescript setlocal shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType html setlocal shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType css setlocal shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType yaml setlocal shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType json setlocal shiftwidth=2 softtabstop=2 expandtab
+
+" Remove trailing whitespace on save
+autocmd BufWritePre * :%s/\s\+$//e
+
+" Return to last edit position when opening files
+autocmd BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif

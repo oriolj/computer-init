@@ -1,0 +1,45 @@
+---
+- name: Check current Go version
+  shell: go version | awk '{print $3}' | sed 's/go//'
+  register: go_current_version
+  changed_when: false
+  failed_when: false
+
+- name: Set Go version
+  set_fact:
+    go_version: "1.21.5"
+
+- name: Download and install Go
+  unarchive:
+    src: "https://go.dev/dl/go{{ go_version }}.linux-{{ ansible_architecture }}.tar.gz"
+    dest: /usr/local
+    remote_src: yes
+    creates: /usr/local/go/bin/go
+  when: 
+    - ansible_os_family != 'Darwin'
+    - go_current_version.rc != 0 or go_current_version.stdout != go_version
+
+- name: Add Go to PATH
+  blockinfile:
+    path: "{{ home_dir }}/.zshrc"
+    block: |
+      # Go programming language
+      export PATH=$PATH:/usr/local/go/bin
+      export GOPATH=$HOME/go
+      export PATH=$PATH:$GOPATH/bin
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - Go"
+    create: yes
+  become: false
+
+- name: Create Go workspace
+  file:
+    path: "{{ home_dir }}/go/{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  loop:
+    - src
+    - bin
+    - pkg
+  become: false

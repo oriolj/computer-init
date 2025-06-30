@@ -1,0 +1,26 @@
+---
+- name: Install required packages for Syncthing repository
+  apt:
+    name:
+      - curl
+      - gnupg
+      - apt-transport-https
+    state: present
+    update_cache: yes
+
+- name: Add Syncthing GPG key
+  apt_key:
+    url: https://syncthing.net/release-key.gpg
+    state: present
+
+- name: Add Syncthing repository
+  apt_repository:
+    repo: "deb https://apt.syncthing.net/ syncthing stable"
+    state: present
+    filename: syncthing
+
+- name: Install Syncthing
+  apt:
+    name: syncthing
+    state: present
+    update_cache: yes

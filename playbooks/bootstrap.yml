@@ -1,0 +1,46 @@
+---
+- name: Bootstrap Playbook - Minimal Setup
+  hosts: localhost
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  
+  tasks:
+    - name: Update package cache
+      package:
+        update_cache: yes
+      when: ansible_os_family != 'Darwin'
+
+    - name: Install essential packages
+      package:
+        name:
+          - git
+          - curl
+          - wget
+          - vim
+          - htop
+          - tmux
+        state: present
+
+    - name: Create user directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "{{ ansible_env.HOME }}/.local/bin"
+        - "{{ ansible_env.HOME }}/.config"
+        - "{{ ansible_env.HOME }}/bin"
+        - "{{ ansible_env.HOME }}/projects"
+      become: false
+
+    - name: Install Ansible dependencies
+      package:
+        name:
+          - python3
+          - python3-pip
+        state: present
+
+    - name: Display next steps
+      debug:
+        msg:
+          - "Bootstrap completed!"
+          - "Next: Run 'ansible-playbook playbooks/site.yml' for full setup"

@@ -1,0 +1,46 @@
+---
+- name: Install Python development tools
+  package:
+    name:
+      - python3
+      - python3-pip
+      - python3-venv
+      - python3-dev
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  when: "'python' in languages"
+
+- name: Install Node.js and npm
+  include_tasks: nodejs.yml
+  when: "'nodejs' in languages"
+
+- name: Install Go
+  include_tasks: golang.yml
+  when: "'go' in languages"
+
+- name: Install Rust
+  include_tasks: rust.yml
+  when: "'rust' in languages"
+
+- name: Install asdf version manager
+  git:
+    repo: https://github.com/asdf-vm/asdf.git
+    dest: "{{ home_dir }}/.asdf"
+    version: v0.13.1
+  become: false
+  when: use_asdf | default(true)
+
+- name: Add asdf to shell
+  blockinfile:
+    path: "{{ home_dir }}/.zshrc"
+    block: |
+      # asdf version manager
+      . "$HOME/.asdf/asdf.sh"
+      # append completions to fpath
+      fpath=(${ASDF_DIR}/completions $fpath)
+      # initialise completions with ZSH's compinit
+      autoload -Uz compinit && compinit
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - asdf"
+    create: yes
+  become: false
+  when: use_asdf | default(true)

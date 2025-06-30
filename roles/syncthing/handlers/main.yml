@@ -1,0 +1,8 @@
+---
+- name: restart syncthing
+  systemd:
+    name: syncthing
+    state: restarted
+    scope: user
+  become: false
+  when: ansible_service_mgr == 'systemd'

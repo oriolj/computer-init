@@ -1,0 +1,6 @@
+---
+- name: Install Tailscale via Homebrew
+  homebrew_cask:
+    name: tailscale
+    state: present
+  become: false

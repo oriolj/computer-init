@@ -1,0 +1,15 @@
+---
+# Copy this file to vault.yml and encrypt it with:
+# ansible-vault encrypt group_vars/all/vault.yml
+
+# Tailscale auth key (get from https://login.tailscale.com/admin/settings/keys)
+vault_tailscale_auth_key: "tskey-auth-..."
+
+# GitHub personal access token (for private repos)
+vault_github_token: "ghp_..."
+
+# SSH key passphrase (if using encrypted keys)
+vault_ssh_key_passphrase: ""
+
+# Any other sensitive variables
+vault_example_password: "changeme"

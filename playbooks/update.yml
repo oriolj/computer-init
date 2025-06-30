@@ -1,0 +1,79 @@
+---
+- name: Update System Playbook
+  hosts: localhost
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  
+  tasks:
+    - name: Update all packages (Debian/Ubuntu)
+      apt:
+        upgrade: dist
+        update_cache: yes
+        autoremove: yes
+        autoclean: yes
+      when: ansible_os_family == 'Debian'
+
+    - name: Update all packages (RedHat/Fedora)
+      dnf:
+        name: '*'
+        state: latest
+        update_cache: yes
+      when: ansible_os_family == 'RedHat'
+
+    - name: Update all packages (Arch)
+      pacman:
+        update_cache: yes
+        upgrade: yes
+      when: ansible_os_family == 'Archlinux'
+
+    - name: Update Homebrew packages (macOS)
+      homebrew:
+        update_homebrew: yes
+        upgrade_all: yes
+      become: false
+      when: ansible_os_family == 'Darwin'
+
+    - name: Update Oh My Zsh
+      git:
+        repo: https://github.com/ohmyzsh/ohmyzsh.git
+        dest: "{{ ansible_env.HOME }}/.oh-my-zsh"
+        update: yes
+      become: false
+
+    - name: Update Zsh plugins
+      git:
+        repo: "{{ item.repo }}"
+        dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/{{ item.name }}"
+        update: yes
+      loop:
+        - { name: 'zsh-autosuggestions', repo: 'https://github.com/zsh-users/zsh-autosuggestions' }
+        - { name: 'zsh-syntax-highlighting', repo: 'https://github.com/zsh-users/zsh-syntax-highlighting' }
+      become: false
+
+    - name: Update Powerlevel10k theme
+      git:
+        repo: https://github.com/romkatv/powerlevel10k.git
+        dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/themes/powerlevel10k"
+        update: yes
+      become: false
+
+    - name: Update global npm packages
+      shell: npm update -g
+      become: false
+      ignore_errors: yes
+
+    - name: Update Rust
+      shell: rustup update
+      become: false
+      ignore_errors: yes
+
+    - name: Clean package manager cache (Debian/Ubuntu)
+      apt:
+        autoclean: yes
+        autoremove: yes
+      when: ansible_os_family == 'Debian'
+
+    - name: Display update summary
+      debug:
+        msg:
+          - "System update completed!"
+          - "You may need to restart some services or reboot for kernel updates."

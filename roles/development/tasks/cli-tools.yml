@@ -1,0 +1,61 @@
+---
+- name: Install ripgrep
+  package:
+    name: ripgrep
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+
+- name: Install fd-find
+  package:
+    name: "{{ package_map['fd-find'][ansible_distribution | lower] | default(package_map['fd-find']['default']) }}"
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  ignore_errors: yes
+
+- name: Install bat
+  package:
+    name: bat
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  ignore_errors: yes
+
+- name: Install exa
+  package:
+    name: exa
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  ignore_errors: yes
+
+- name: Install fzf from git (if not in package manager)
+  git:
+    repo: https://github.com/junegunn/fzf.git
+    dest: "{{ home_dir }}/.fzf"
+    depth: 1
+    update: yes
+  become: false
+  register: fzf_git
+
+- name: Install fzf
+  shell: "{{ home_dir }}/.fzf/install --all --no-bash --no-fish"
+  when: fzf_git.changed
+  become: false
+
+- name: Install httpie
+  package:
+    name: httpie
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  ignore_errors: yes
+
+- name: Install jq
+  package:
+    name: jq
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+
+- name: Install direnv
+  package:
+    name: direnv
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  ignore_errors: yes

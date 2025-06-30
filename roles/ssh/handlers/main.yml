@@ -1,0 +1,8 @@
+---
+- name: restart sshd
+  systemd:
+    name: "{{ ssh_service }}"
+    state: restarted
+  vars:
+    ssh_service: "{{ 'ssh' if ansible_os_family == 'Debian' else 'sshd' }}"
+  when: ansible_os_family != 'Darwin'

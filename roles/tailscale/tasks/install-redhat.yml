@@ -1,0 +1,14 @@
+---
+- name: Add Tailscale repository
+  yum_repository:
+    name: tailscale-stable
+    description: Tailscale stable
+    baseurl: https://pkgs.tailscale.com/stable/fedora/$basearch
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: https://pkgs.tailscale.com/stable/fedora/repo.gpg
+
+- name: Install Tailscale
+  dnf:
+    name: tailscale
+    state: present

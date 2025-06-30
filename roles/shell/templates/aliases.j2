@@ -1,0 +1,132 @@
+# {{ ansible_managed }}
+
+# Navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ~='cd ~'
+alias -- -='cd -'
+
+# Directory listing
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias lt='ls -altr'
+alias lh='ls -alh'
+
+# Use exa if available
+if command -v exa &> /dev/null; then
+    alias ls='exa'
+    alias ll='exa -la'
+    alias la='exa -a'
+    alias lt='exa -la --sort=modified'
+    alias tree='exa --tree'
+fi
+
+# Safety nets
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias mkdir='mkdir -pv'
+
+# Colorize output
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias diff='diff --color=auto'
+
+# System
+alias df='df -h'
+alias du='du -h'
+alias free='free -h'
+alias top='htop || top'
+
+# Git
+alias g='git'
+alias gs='git status'
+alias gc='git commit'
+alias gca='git commit -a'
+alias ga='git add'
+alias gd='git diff'
+alias gb='git branch'
+alias gco='git checkout'
+alias gp='git push'
+alias gl='git pull'
+alias glog='git log --oneline --graph --decorate'
+
+# Docker
+alias d='docker'
+alias dc='docker-compose'
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+alias di='docker images'
+alias dex='docker exec -it'
+alias dlog='docker logs -f'
+alias dprune='docker system prune -a'
+
+# Python
+alias py='python3'
+alias pip='pip3'
+alias venv='python3 -m venv'
+alias activate='source venv/bin/activate'
+
+# Editor
+alias v='vim'
+alias vi='vim'
+alias nv='nvim'
+
+# System shortcuts
+alias update='sudo apt update && sudo apt upgrade'
+alias install='sudo apt install'
+alias search='apt search'
+alias ports='netstat -tulanp'
+alias myip='curl http://ipecho.net/plain; echo'
+alias weather='curl wttr.in'
+
+# Useful shortcuts
+alias c='clear'
+alias h='history'
+alias j='jobs -l'
+alias path='echo -e ${PATH//:/\\n}'
+alias now='date +"%Y-%m-%d %T"'
+alias week='date +%V'
+
+# File operations
+alias untar='tar -xvf'
+alias targz='tar -czvf'
+alias unbz2='tar -xjvf'
+alias tarbz2='tar -cjvf'
+
+# Process management
+alias psg='ps aux | grep -v grep | grep -i -e VSZ -e'
+alias killp='kill -9'
+
+# Disk usage
+alias duh='du -h --max-depth=1 | sort -hr'
+alias dfh='df -h | grep -v snap'
+
+# Network
+alias ping='ping -c 5'
+alias fastping='ping -c 100 -i 0.2'
+alias wget='wget -c'
+
+# Safety features
+alias chown='chown --preserve-root'
+alias chmod='chmod --preserve-root'
+alias chgrp='chgrp --preserve-root'
+
+# Development
+alias serve='python3 -m http.server'
+alias json='python3 -m json.tool'
+
+# Clipboard (if xclip is installed)
+if command -v xclip &> /dev/null; then
+    alias pbcopy='xclip -selection clipboard'
+    alias pbpaste='xclip -selection clipboard -o'
+fi
+
+# Custom functions source
+alias reload='source ~/.zshrc'
+alias zshconfig='${EDITOR:-vim} ~/.zshrc'
+alias aliasconfig='${EDITOR:-vim} ~/.aliases'

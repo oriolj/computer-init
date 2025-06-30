@@ -1,0 +1,47 @@
+# {{ ansible_managed }}
+
+# Global SSH client configuration
+
+Host *
+    # Security
+    ForwardAgent no
+    ForwardX11 no
+    PasswordAuthentication no
+    HostbasedAuthentication no
+    GSSAPIAuthentication no
+    GSSAPIDelegateCredentials no
+    
+    # Connection
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    TCPKeepAlive yes
+    Compression yes
+    
+    # Multiplexing
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%h-%p-%r
+    ControlPersist 600
+    
+    # Security algorithms
+    KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256
+    Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+    MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com
+    
+    # Other options
+    HashKnownHosts yes
+    StrictHostKeyChecking ask
+    VisualHostKey yes
+
+# GitHub
+Host github.com
+    HostName github.com
+    User git
+    PreferredAuthentications publickey
+
+# GitLab
+Host gitlab.com
+    HostName gitlab.com
+    User git
+    PreferredAuthentications publickey
+
+# Add your custom host configurations below

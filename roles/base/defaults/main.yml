@@ -1,0 +1,10 @@
+---
+# Default packages - these will be overridden by group_vars
+packages:
+  base:
+    common: []
+    ubuntu: []
+    debian: []
+    fedora: []
+    arch: []
+    darwin: []

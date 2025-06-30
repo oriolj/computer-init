@@ -1,0 +1,13 @@
+---
+- name: Install extra packages from standard repos
+  package:
+    name: "{{ packages.extras.common + packages.extras[ansible_distribution | lower] | default([]) }}"
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  ignore_errors: yes
+
+- name: Install AUR packages (Arch Linux)
+  include_tasks: aur-packages.yml
+  when: 
+    - ansible_os_family == 'Archlinux'
+    - install_aur_packages | default(true)

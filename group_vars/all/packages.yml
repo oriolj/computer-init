@@ -1,0 +1,161 @@
+---
+# Package definitions for different operating systems
+packages:
+  base:
+    common:
+      - curl
+      - wget
+      - git
+      - vim
+      - tmux
+      - htop
+      - tree
+      - unzip
+      - jq
+      - ncdu
+      - rsync
+      - openssh-client
+    ubuntu:
+      - build-essential
+      - software-properties-common
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - net-tools
+      - dnsutils
+      - firefox
+      - chromium-browser
+    debian:
+      - build-essential
+      - software-properties-common
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - net-tools
+      - dnsutils
+    fedora:
+      - gcc
+      - gcc-c++
+      - make
+      - kernel-devel
+      - dnf-plugins-core
+      - util-linux-user
+      - bind-utils
+    arch:
+      - base-devel
+      - net-tools
+      - bind
+      - firefox
+      - chromium
+      - discord
+    darwin:
+      - coreutils
+      - gnu-tar
+      - gnu-sed
+      - gawk
+      - gnutls
+      - gnu-indent
+      - gnu-getopt
+      - findutils
+      - bash
+      - grep
+      - wget
+      - curl
+
+  development:
+    common:
+      - neovim
+      - ripgrep
+      - fzf
+      - httpie
+      - direnv
+    ubuntu:
+      - python3-pip
+      - python3-venv
+      - python3-dev
+      - nodejs
+      - npm
+      - golang
+      - rustc
+      - cargo
+    debian:
+      - python3-pip
+      - python3-venv
+      - python3-dev
+      - nodejs
+      - npm
+      - golang
+      - rustc
+      - cargo
+    fedora:
+      - python3-pip
+      - python3-devel
+      - nodejs
+      - npm
+      - golang
+      - rust
+      - cargo
+    arch:
+      - python-pip
+      - nodejs
+      - npm
+      - go
+      - rust
+    darwin:
+      - python@3.11
+      - node
+      - go
+      - rust
+      - fd
+      - bat
+      - exa
+      - jq
+      - tree
+      - htop
+      - tmux
+      - git
+
+  extras:
+    common:
+      - tig
+      - tldr
+      - ncdu
+      - duf
+      - dust
+      - procs
+      - bottom
+      - zoxide
+    ubuntu:
+      - silversearcher-ag
+    debian:
+      - silversearcher-ag
+    fedora:
+      - the_silver_searcher
+    arch:
+      - the_silver_searcher
+    darwin:
+      - the_silver_searcher
+
+# Package name mappings for cross-platform compatibility
+package_map:
+  fd-find:
+    default: fd-find
+    arch: fd
+    fedora: fd-find
+    darwin: fd
+  bat:
+    default: bat
+    ubuntu: bat
+    debian: bat
+    arch: bat
+    fedora: bat
+    darwin: bat
+  exa:
+    default: exa
+    ubuntu: exa
+    debian: exa
+    arch: exa
+    fedora: exa
+    darwin: exa

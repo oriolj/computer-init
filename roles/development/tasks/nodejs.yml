@@ -1,0 +1,58 @@
+---
+- name: Install Node.js from NodeSource (Debian/Ubuntu)
+  shell: |
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+  args:
+    creates: /etc/apt/sources.list.d/nodesource.list
+  when: ansible_os_family == 'Debian'
+
+- name: Install Node.js package (Debian/Ubuntu)
+  apt:
+    name: nodejs
+    state: present
+    update_cache: yes
+  when: ansible_os_family == 'Debian'
+
+- name: Install Node.js (Fedora/RedHat)
+  dnf:
+    name:
+      - nodejs
+      - npm
+    state: present
+  when: ansible_os_family == 'RedHat'
+
+- name: Install Node.js (Arch)
+  pacman:
+    name:
+      - nodejs
+      - npm
+    state: present
+  when: ansible_os_family == 'Archlinux'
+
+- name: Install default global npm packages
+  npm:
+    name: "{{ item }}"
+    global: yes
+    state: present
+  loop:
+    - yarn
+    - pnpm
+    - typescript
+    - ts-node
+    - nodemon
+    - prettier
+    - eslint
+  become: false
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/usr/local/bin"
+
+- name: Install user-defined global npm packages
+  npm:
+    name: "{{ item }}"
+    global: yes
+    state: present
+  loop: "{{ npm_global_packages | default([]) }}"
+  become: false
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/usr/local/bin"
+  when: npm_global_packages is defined

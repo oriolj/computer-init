@@ -1,0 +1,41 @@
+---
+- name: Install development packages
+  package:
+    name: "{{ packages.development.common + packages.development[ansible_distribution | lower] | default([]) }}"
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  ignore_errors: yes
+
+- name: Install modern CLI tools
+  include_tasks: cli-tools.yml
+  when: install_development_tools | default(true)
+
+- name: Install Docker
+  include_tasks: docker.yml
+  when: 
+    - install_docker | default(true)
+    - ansible_os_family != 'Darwin'
+
+- name: Install programming languages
+  include_tasks: languages.yml
+  when: install_languages | default(true)
+
+- name: Install VS Code
+  include_tasks: vscode.yml
+  when: install_vscode | default(true)
+
+- name: Configure Git
+  include_tasks: git.yml
+
+- name: Install additional development tools
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - tmux
+    - tig
+    - ncdu
+    - duf
+    - tldr
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  ignore_errors: yes

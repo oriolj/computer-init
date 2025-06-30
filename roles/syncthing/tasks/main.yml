@@ -1,0 +1,79 @@
+---
+- name: Check if Syncthing is already installed
+  command: which syncthing
+  register: syncthing_check
+  changed_when: false
+  failed_when: false
+
+- name: Install Syncthing (Debian/Ubuntu)
+  include_tasks: install-debian.yml
+  when: 
+    - ansible_os_family == 'Debian'
+    - syncthing_check.rc != 0
+
+- name: Install Syncthing (RedHat/Fedora)
+  include_tasks: install-redhat.yml
+  when: 
+    - ansible_os_family == 'RedHat'
+    - syncthing_check.rc != 0
+
+- name: Install Syncthing (Arch)
+  include_tasks: install-arch.yml
+  when: 
+    - ansible_os_family == 'Archlinux'
+    - syncthing_check.rc != 0
+
+- name: Install Syncthing (macOS)
+  include_tasks: install-macos.yml
+  when: 
+    - ansible_os_family == 'Darwin'
+    - syncthing_check.rc != 0
+
+- name: Create Syncthing config directory
+  file:
+    path: "{{ home_dir }}/.config/syncthing"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  become: false
+
+- name: Configure Syncthing systemd user service
+  template:
+    src: syncthing.service.j2
+    dest: "{{ home_dir }}/.config/systemd/user/syncthing.service"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0644'
+  become: false
+  when: ansible_service_mgr == 'systemd'
+
+- name: Start and enable Syncthing service
+  systemd:
+    name: syncthing
+    state: started
+    enabled: yes
+    scope: user
+    daemon_reload: yes
+  become: false
+  when: ansible_service_mgr == 'systemd'
+
+- name: Wait for Syncthing to start
+  wait_for:
+    port: 8384
+    host: 127.0.0.1
+    delay: 5
+    timeout: 30
+  when: syncthing_gui_enabled | default(true)
+
+- name: Configure Syncthing GUI settings
+  template:
+    src: config.xml.j2
+    dest: "{{ home_dir }}/.config/syncthing/config.xml"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0600'
+    backup: yes
+  become: false
+  when: syncthing_configure | default(false)
+  notify: restart syncthing

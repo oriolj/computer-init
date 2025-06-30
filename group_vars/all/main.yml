@@ -1,0 +1,234 @@
+---
+# User configuration
+user: "{{ lookup('env', 'USER') }}"
+home_dir: "{{ lookup('env', 'HOME') }}"
+
+# Dotfiles configuration
+dotfiles_repo: ""  # Set to your dotfiles repo, e.g., "https://github.com/username/dotfiles.git"
+dotfiles_path: "{{ home_dir }}/.dotfiles"
+dotfiles_branch: "main"
+
+# Shell configuration
+default_shell: "/bin/zsh"
+oh_my_zsh_theme: "powerlevel10k/powerlevel10k"
+oh_my_zsh_plugins:
+  - git
+  - docker
+  - kubectl
+  - zsh-autosuggestions
+  - zsh-syntax-highlighting
+  - autojump
+  - fzf
+
+# Development configuration
+install_development_tools: true
+install_docker: true
+install_languages: true
+
+# Programming languages to install
+languages:
+  - python
+  - nodejs
+  - go
+  - rust
+
+# Global NPM packages to install
+npm_global_packages:
+  - "@google/gemini-cli"
+  - "@anthropic-ai/claude-code"
+
+# SSH configuration
+ssh_port: 22
+ssh_permit_root_login: "no"
+ssh_password_authentication: "no"
+ssh_pubkey_authentication: "yes"
+generate_ssh_key: true
+ssh_key_type: "ed25519"
+
+# Tailscale configuration
+install_tailscale: true
+tailscale_auth_key: ""  # Set this in vault.yml
+
+# Syncthing configuration
+install_syncthing: true
+syncthing_gui_address: "127.0.0.1:8384"
+syncthing_gui_enabled: true
+
+# System configuration
+enable_firewall: true
+automatic_updates: true
+timezone: "{{ ansible_date_time.tz }}"
+
+# Package installation
+update_cache_valid_time: 3600  # 1 hour
+
+# AUR packages for Arch Linux (installed via yay)
+aur_packages:
+  - visual-studio-code-bin
+  - cursor-bin
+  - spotify
+  - slack-desktop
+  - zoom
+  - brave-bin
+
+---
+# Package definitions for different operating systems
+packages:
+  base:
+    common:
+      - curl
+      - wget
+      - git
+      - vim
+      - tmux
+      - htop
+      - tree
+      - unzip
+      - jq
+      - ncdu
+      - rsync
+      - openssh-client
+    ubuntu:
+      - build-essential
+      - software-properties-common
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - net-tools
+      - dnsutils
+      - firefox
+      - chromium-browser
+    debian:
+      - build-essential
+      - software-properties-common
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - net-tools
+      - dnsutils
+    fedora:
+      - gcc
+      - gcc-c++
+      - make
+      - kernel-devel
+      - dnf-plugins-core
+      - util-linux-user
+      - bind-utils
+    arch:
+      - base-devel
+      - net-tools
+      - bind
+      - firefox
+      - chromium
+      - discord
+    darwin:
+      - coreutils
+      - gnu-tar
+      - gnu-sed
+      - gawk
+      - gnutls
+      - gnu-indent
+      - gnu-getopt
+      - findutils
+      - bash
+      - grep
+      - wget
+      - curl
+
+  development:
+    common:
+      - neovim
+      - ripgrep
+      - fzf
+      - httpie
+      - direnv
+    ubuntu:
+      - python3-pip
+      - python3-venv
+      - python3-dev
+      - nodejs
+      - npm
+      - golang
+      - rustc
+      - cargo
+    debian:
+      - python3-pip
+      - python3-venv
+      - python3-dev
+      - nodejs
+      - npm
+      - golang
+      - rustc
+      - cargo
+    fedora:
+      - python3-pip
+      - python3-devel
+      - nodejs
+      - npm
+      - golang
+      - rust
+      - cargo
+    arch:
+      - python-pip
+      - nodejs
+      - npm
+      - go
+      - rust
+    darwin:
+      - python@3.11
+      - node
+      - go
+      - rust
+      - fd
+      - bat
+      - exa
+      - jq
+      - tree
+      - htop
+      - tmux
+      - git
+
+  extras:
+    common:
+      - tig
+      - tldr
+      - ncdu
+      - duf
+      - dust
+      - procs
+      - bottom
+      - zoxide
+    ubuntu:
+      - silversearcher-ag
+    debian:
+      - silversearcher-ag
+    fedora:
+      - the_silver_searcher
+    arch:
+      - the_silver_searcher
+    darwin:
+      - the_silver_searcher
+
+# Package name mappings for cross-platform compatibility
+package_map:
+  fd-find:
+    default: fd-find
+    arch: fd
+    fedora: fd-find
+    darwin: fd
+  bat:
+    default: bat
+    ubuntu: bat
+    debian: bat
+    arch: bat
+    fedora: bat
+    darwin: bat
+  exa:
+    default: exa
+    ubuntu: exa
+    debian: exa
+    arch: exa
+    fedora: exa
+    darwin: exa

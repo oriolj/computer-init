@@ -1,0 +1,73 @@
+---
+- name: Include OS-specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution | lower }}.yml"
+        - "{{ ansible_os_family | lower }}.yml"
+        - "default.yml"
+      paths:
+        - ../vars
+      skip: true
+
+- name: Update package cache (Debian/Ubuntu)
+  apt:
+    update_cache: yes
+    cache_valid_time: "{{ update_cache_valid_time }}"
+  become: yes
+  when: ansible_os_family == 'Debian'
+
+- name: Update package cache (RedHat/Fedora)
+  dnf:
+    update_cache: yes
+  become: yes
+  when: ansible_os_family == 'RedHat'
+
+- name: Update package cache (Arch)
+  pacman:
+    update_cache: yes
+  become: yes
+  when: ansible_os_family == 'Archlinux'
+
+- name: Install yay AUR helper (Arch)
+  include_tasks: install-yay.yml
+  when: ansible_os_family == 'Archlinux'
+
+- name: Install base packages
+  package:
+    name: "{{ packages.base.common + packages.base[ansible_distribution | lower] | default([]) }}"
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+
+- name: Set timezone
+  timezone:
+    name: "{{ timezone }}"
+  become: yes
+  when: 
+    - timezone is defined
+    - ansible_os_family != 'Darwin'
+
+- name: Enable automatic updates (Ubuntu/Debian)
+  include_tasks: automatic-updates-debian.yml
+  when: 
+    - automatic_updates | default(false)
+    - ansible_os_family == 'Debian'
+
+- name: Configure firewall
+  include_tasks: firewall.yml
+  when: enable_firewall | default(false)
+
+- name: Create common directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  loop:
+    - "{{ home_dir }}/.local/bin"
+    - "{{ home_dir }}/.config"
+    - "{{ home_dir }}/bin"
+    - "{{ home_dir }}/projects"
+  become: false
