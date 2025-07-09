@@ -168,3 +168,7 @@ package_map:
     default: openssh-client
     archlinux: openssh
     darwin: openssh
+  openssh-server:
+    default: openssh-server
+    archlinux: openssh
+    darwin: openssh

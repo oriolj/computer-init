@@ -62,7 +62,7 @@ syncthing_gui_enabled: true
 # System configuration
 enable_firewall: true
 automatic_updates: true
-timezone: "{{ ansible_date_time.tz }}"
+timezone: "Europe/Madrid"
 
 # Package installation
 update_cache_valid_time: 3600  # 1 hour
@@ -75,6 +75,7 @@ aur_packages:
   - slack-desktop
   - zoom
   - brave-bin
+  - ttf-meslo-nerd-font-powerlevel10k
 
 # Package definitions for different operating systems
 packages:

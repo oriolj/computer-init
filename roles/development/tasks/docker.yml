@@ -54,6 +54,7 @@
     name: "{{ user }}"
     groups: docker
     append: yes
+  become: yes
   notify: restart docker
 
 - name: Start and enable Docker service

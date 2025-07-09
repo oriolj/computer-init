@@ -98,4 +98,5 @@
   user:
     name: "{{ user }}"
     shell: "{{ default_shell }}"
+  become: yes
   when: current_shell.stdout != default_shell
