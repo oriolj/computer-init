@@ -25,6 +25,10 @@ install_development_tools: true
 install_docker: true
 install_languages: true
 
+# Git configuration
+git_user_name: "Oriol Jimenez"
+git_user_email: "oriolj@gmail.com"
+
 # Programming languages to install
 languages:
   - python
@@ -47,6 +51,7 @@ ssh_key_type: "ed25519"
 
 # Tailscale configuration
 install_tailscale: true
+use_tailscale_install_script: true  # Use official install script (curl -fsSL https://tailscale.com/install.sh | sh)
 tailscale_auth_key: ""  # Set this in vault.yml
 
 # Syncthing configuration
@@ -71,7 +76,6 @@ aur_packages:
   - zoom
   - brave-bin
 
----
 # Package definitions for different operating systems
 packages:
   base:

@@ -5,29 +5,39 @@
   changed_when: false
   failed_when: false
 
+- name: Install Tailscale using official install script
+  shell: curl -fsSL https://tailscale.com/install.sh | sh
+  when: 
+    - tailscale_check.rc != 0
+    - use_tailscale_install_script | default(true)
+
 - name: Install Tailscale (Debian/Ubuntu)
   include_tasks: install-debian.yml
   when: 
     - ansible_os_family == 'Debian'
     - tailscale_check.rc != 0
+    - not (use_tailscale_install_script | default(true))
 
 - name: Install Tailscale (RedHat/Fedora)
   include_tasks: install-redhat.yml
   when: 
     - ansible_os_family == 'RedHat'
     - tailscale_check.rc != 0
+    - not (use_tailscale_install_script | default(true))
 
 - name: Install Tailscale (Arch)
   include_tasks: install-arch.yml
   when: 
     - ansible_os_family == 'Archlinux'
     - tailscale_check.rc != 0
+    - not (use_tailscale_install_script | default(true))
 
 - name: Install Tailscale (macOS)
   include_tasks: install-macos.yml
   when: 
     - ansible_os_family == 'Darwin'
     - tailscale_check.rc != 0
+    - not (use_tailscale_install_script | default(true))
 
 - name: Start and enable Tailscale service
   systemd:
