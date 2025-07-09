@@ -26,6 +26,7 @@ packages:
       - dnsutils
       - firefox
       - chromium-browser
+      - gedit
     debian:
       - build-essential
       - software-properties-common
@@ -35,6 +36,7 @@ packages:
       - lsb-release
       - net-tools
       - dnsutils
+      - gedit
     fedora:
       - gcc
       - gcc-c++
@@ -43,6 +45,7 @@ packages:
       - dnf-plugins-core
       - util-linux-user
       - bind-utils
+      - gedit
     arch:
       - base-devel
       - net-tools
@@ -51,6 +54,7 @@ packages:
       - chromium
       - discord
       - gnome-extra
+      - gedit
     darwin:
       - coreutils
       - gnu-tar
@@ -160,3 +164,7 @@ package_map:
     arch: exa
     fedora: exa
     darwin: exa
+  openssh-client:
+    default: openssh-client
+    archlinux: openssh
+    darwin: openssh

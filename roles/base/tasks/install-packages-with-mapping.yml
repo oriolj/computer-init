@@ -1,0 +1,33 @@
+---
+- name: Debug package mapping
+  debug:
+    msg: 
+      - "Distribution: {{ ansible_distribution | lower }}"
+      - "Package list: {{ package_list }}"
+      - "Package map: {{ package_map | default({}) }}"
+
+- name: Process package mappings
+  set_fact:
+    mapped_packages: >-
+      {%- set result = [] -%}
+      {%- for pkg in package_list -%}
+        {%- if package_map is defined and pkg in package_map and ansible_distribution | lower in package_map[pkg] -%}
+          {%- set _ = result.append(package_map[pkg][ansible_distribution | lower]) -%}
+        {%- elif package_map is defined and pkg in package_map and 'default' in package_map[pkg] -%}
+          {%- set _ = result.append(package_map[pkg]['default']) -%}
+        {%- else -%}
+          {%- set _ = result.append(pkg) -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {{ result }}
+
+- name: Debug mapped packages
+  debug:
+    msg: "Mapped packages: {{ mapped_packages }}"
+
+- name: Install packages with mapping applied
+  package:
+    name: "{{ mapped_packages }}"
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  when: mapped_packages | length > 0

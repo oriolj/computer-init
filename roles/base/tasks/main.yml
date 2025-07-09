@@ -35,10 +35,9 @@
   when: ansible_os_family == 'Archlinux'
 
 - name: Install base packages
-  package:
-    name: "{{ packages.base.common + packages.base[ansible_distribution | lower] | default([]) }}"
-    state: present
-  become: "{{ ansible_os_family != 'Darwin' }}"
+  include_tasks: install-packages-with-mapping.yml
+  vars:
+    package_list: "{{ packages.base.common + packages.base[ansible_distribution | lower] | default([]) }}"
 
 - name: Set timezone
   timezone:
