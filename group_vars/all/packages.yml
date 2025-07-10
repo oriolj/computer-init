@@ -15,6 +15,9 @@ packages:
       - ncdu
       - rsync
       - openssh-client
+      - iotop
+      - nload
+      - pigz
     ubuntu:
       - build-essential
       - software-properties-common
@@ -76,6 +79,9 @@ packages:
       - fzf
       - httpie
       - direnv
+      - redis
+      - mariadb
+      - memcached
     ubuntu:
       - python3-pip
       - python3-venv
@@ -135,6 +141,8 @@ packages:
       - syncthing
       - syncthing-gtk
       - transmission-gtk
+      - keepassxc
+      - google-chrome
     ubuntu:
       - silversearcher-ag
     debian:
@@ -143,6 +151,13 @@ packages:
       - the_silver_searcher
     arch:
       - the_silver_searcher
+      - pycharm-professional
+      - webstorm
+      - webstorm-jre
+      - signal-desktop
+      - visual-studio-code-bin
+      - gitkraken
+      - gitkraken-cli
     darwin:
       - the_silver_searcher
 
