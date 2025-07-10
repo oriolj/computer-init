@@ -132,6 +132,9 @@ packages:
       - procs
       - bottom
       - zoxide
+      - syncthing
+      - syncthing-gtk
+      - transmission-gtk
     ubuntu:
       - silversearcher-ag
     debian:
