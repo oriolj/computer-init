@@ -158,6 +158,7 @@ packages:
       - visual-studio-code-bin
       - gitkraken
       - gitkraken-cli
+      - insomnia-bin
     darwin:
       - the_silver_searcher
 
