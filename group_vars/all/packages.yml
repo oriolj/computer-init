@@ -159,6 +159,7 @@ packages:
       - gitkraken
       - gitkraken-cli
       - insomnia-bin
+      - libreoffice-fresh
     darwin:
       - the_silver_searcher
 
