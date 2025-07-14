@@ -162,6 +162,7 @@ packages:
       - insomnia-bin
       - libreoffice-fresh
       - aur/repomix
+      - kuro
     darwin:
       - the_silver_searcher
 
