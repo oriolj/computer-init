@@ -112,6 +112,7 @@ packages:
       - python-pip
       - nodejs
       - npm
+      - pnpm
       - go
       - rust
     darwin:
@@ -160,6 +161,7 @@ packages:
       - gitkraken-cli
       - insomnia-bin
       - libreoffice-fresh
+      - aur/repomix
     darwin:
       - the_silver_searcher
 
