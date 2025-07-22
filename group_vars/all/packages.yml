@@ -115,6 +115,8 @@ packages:
       - pnpm
       - go
       - rust
+      - uv
+      - extra/python-poetry
     darwin:
       - python@3.11
       - node
