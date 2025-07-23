@@ -113,6 +113,7 @@ packages:
       - nodejs
       - npm
       - pnpm
+      - aur/fnm
       - go
       - rust
       - uv
