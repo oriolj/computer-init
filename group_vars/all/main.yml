@@ -93,6 +93,7 @@ packages:
       - ncdu
       - rsync
       - openssh-client
+      - nfs-utils
     ubuntu:
       - build-essential
       - software-properties-common
@@ -213,6 +214,7 @@ packages:
       - the_silver_searcher
     arch:
       - the_silver_searcher
+      - slack-desktop-wayland
     darwin:
       - the_silver_searcher
 
