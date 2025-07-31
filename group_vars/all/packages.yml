@@ -15,6 +15,7 @@ packages:
       - ncdu
       - rsync
       - openssh-client
+      - mosh
       - iotop
       - nload
       - pigz
@@ -30,6 +31,8 @@ packages:
       - firefox
       - chromium-browser
       - gedit
+      - eog
+      - libheif1
     debian:
       - build-essential
       - software-properties-common
@@ -40,6 +43,8 @@ packages:
       - net-tools
       - dnsutils
       - gedit
+      - eog
+      - libheif1
     fedora:
       - gcc
       - gcc-c++
@@ -49,6 +54,8 @@ packages:
       - util-linux-user
       - bind-utils
       - gedit
+      - eog
+      - libheif
     arch:
       - base-devel
       - net-tools
@@ -58,6 +65,8 @@ packages:
       - discord
       - gnome-extra
       - gedit
+      - eog
+      - libheif
     darwin:
       - coreutils
       - gnu-tar
