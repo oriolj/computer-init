@@ -94,6 +94,7 @@ packages:
       - rsync
       - openssh-client
       - nfs-utils
+      - mosh
     ubuntu:
       - build-essential
       - software-properties-common
@@ -129,6 +130,11 @@ packages:
       - firefox
       - chromium
       - discord
+      - dosfstools
+      - gparted
+      - btrfs-progs
+      - ntfs-3g
+      - exfatprogs
     darwin:
       - coreutils
       - gnu-tar
