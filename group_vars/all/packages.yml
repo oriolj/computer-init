@@ -33,6 +33,7 @@ packages:
       - gedit
       - eog
       - libheif1
+      - ssh-import-id
     debian:
       - build-essential
       - software-properties-common
@@ -45,6 +46,7 @@ packages:
       - gedit
       - eog
       - libheif1
+      - ssh-import-id
     fedora:
       - gcc
       - gcc-c++
