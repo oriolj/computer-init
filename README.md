@@ -31,6 +31,7 @@ A comprehensive Ansible-based solution for automating the setup and configuratio
 - SSH key generation
 - SSH agent setup
 - Client configuration
+- Authorized keys management
 
 ### Development Tools
 - Modern CLI tools (ripgrep, fd, bat, exa, fzf)
@@ -178,6 +179,35 @@ ansible-computer-init/
 ```
 
 ## Customization
+
+### Managing SSH Authorized Keys
+
+To add SSH public keys that will be distributed to all hosts:
+
+1. Edit `group_vars/all/main.yml`
+2. Add your SSH public key to the `ssh_authorized_keys` list:
+
+```yaml
+ssh_authorized_keys:
+  - key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAvzwS3jm0Qa9ICBq8aAeKQdnYpAh1rrErtUGxDXYn7E"
+    comment: "Fold 7"
+    state: present
+  - key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB..."
+    comment: "Work laptop"
+    state: present
+  # To remove a key, set state to absent:
+  - key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB..."
+    comment: "Old key"
+    state: absent
+```
+
+3. Run the SSH role to update all hosts:
+
+```bash
+ansible-playbook playbooks/site.yml --tags ssh --ask-become-pass
+```
+
+The keys will be managed in `~/.ssh/authorized_keys` on all target hosts.
 
 ### Adding New Packages
 

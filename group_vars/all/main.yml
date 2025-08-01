@@ -48,7 +48,17 @@ ssh_password_authentication: "no"
 ssh_pubkey_authentication: "yes"
 generate_ssh_key: true
 ssh_key_type: "ed25519"
-import_github_ssh_keys: true
+
+# SSH Authorized Keys
+# Add new SSH public keys here to distribute them to all hosts
+ssh_authorized_keys:
+  - key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAvzwS3jm0Qa9ICBq8aAeKQdnYpAh1rrErtUGxDXYn7E"
+    comment: "Fold 7"
+    state: present
+  # Add more keys here as needed:
+  # - key: "ssh-rsa AAAAB3NzaC1yc2EA..."
+  #   comment: "Work laptop"
+  #   state: present
 
 # Tailscale configuration
 install_tailscale: true

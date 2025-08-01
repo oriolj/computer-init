@@ -26,34 +26,15 @@
     mode: '0700'
   become: false
 
-- name: Install ssh-import-id package
-  package:
-    name: ssh-import-id
-    state: present
-  become: true
-  when:
-    - ansible_os_family == 'Debian'
-    - import_github_ssh_keys | default(true)
-
-- name: Check if authorized_keys already contains GitHub keys
-  stat:
-    path: "{{ home_dir }}/.ssh/authorized_keys"
-  register: authorized_keys_stat
-  when:
-    - ansible_os_family == 'Debian'
-    - import_github_ssh_keys | default(true)
-
-- name: Import SSH keys from GitHub user oriolj
-  command: ssh-import-id-gh oriolj
-  args:
-    chdir: "{{ home_dir }}"
+- name: Manage authorized SSH keys
+  authorized_key:
+    user: "{{ user }}"
+    key: "{{ item.key }}"
+    comment: "{{ item.comment | default(omit) }}"
+    state: "{{ item.state | default('present') }}"
+  loop: "{{ ssh_authorized_keys }}"
+  when: ssh_authorized_keys is defined and ssh_authorized_keys | length > 0
   become: false
-  when:
-    - ansible_os_family == 'Debian'
-    - import_github_ssh_keys | default(true)
-    - not authorized_keys_stat.stat.exists or authorized_keys_stat.stat.size == 0
-  register: ssh_import_result
-  changed_when: ssh_import_result.rc == 0
 
 - name: Configure SSH daemon
   template:
