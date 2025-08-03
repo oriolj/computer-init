@@ -106,6 +106,7 @@ packages:
       - openssh-client
       - nfs-utils
       - mosh
+      - pigz
     ubuntu:
       - build-essential
       - software-properties-common
