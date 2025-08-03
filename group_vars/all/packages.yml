@@ -33,6 +33,7 @@ packages:
       - gedit
       - eog
       - libheif1
+      - vlc
     debian:
       - build-essential
       - software-properties-common
@@ -45,6 +46,7 @@ packages:
       - gedit
       - eog
       - libheif1
+      - vlc
     fedora:
       - gcc
       - gcc-c++
@@ -56,6 +58,7 @@ packages:
       - gedit
       - eog
       - libheif
+      - vlc
     arch:
       - base-devel
       - net-tools
@@ -67,6 +70,8 @@ packages:
       - gedit
       - eog
       - libheif
+      - vlc
+      - vlc-plugin-all
     darwin:
       - coreutils
       - gnu-tar
