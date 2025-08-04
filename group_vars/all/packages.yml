@@ -96,6 +96,8 @@ packages:
       - redis
       - mariadb
       - memcached
+      - docker
+      - docker-compose
     ubuntu:
       - python3-pip
       - python3-venv
@@ -212,3 +214,17 @@ package_map:
     default: openssh-server
     archlinux: openssh
     darwin: openssh
+  docker:
+    default: docker
+    ubuntu: docker-ce
+    debian: docker-ce
+    archlinux: docker
+    fedora: docker
+    darwin: docker
+  docker-compose:
+    default: docker-compose
+    ubuntu: docker-compose-plugin
+    debian: docker-compose-plugin
+    archlinux: docker-compose
+    fedora: docker-compose
+    darwin: docker-compose

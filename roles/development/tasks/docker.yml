@@ -49,6 +49,13 @@
     state: present
   when: ansible_os_family == 'Archlinux'
 
+- name: Ensure docker group exists (Arch)
+  group:
+    name: docker
+    state: present
+  become: yes
+  when: ansible_os_family == 'Archlinux'
+
 - name: Add user to docker group
   user:
     name: "{{ user }}"
@@ -56,6 +63,11 @@
     append: yes
   become: yes
   notify: restart docker
+
+- name: Display docker group membership note
+  debug:
+    msg: "User {{ user }} has been added to the docker group. You may need to log out and back in for this to take effect."
+  when: ansible_os_family == 'Archlinux'
 
 - name: Start and enable Docker service
   systemd:
