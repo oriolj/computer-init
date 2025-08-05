@@ -72,6 +72,7 @@ packages:
       - libheif
       - vlc
       - vlc-plugin-all
+      - cheese
     darwin:
       - coreutils
       - gnu-tar
