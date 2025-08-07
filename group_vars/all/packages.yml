@@ -18,6 +18,7 @@ packages:
       - mosh
       - iotop
       - nload
+      - nethogs
       - pigz
     ubuntu:
       - build-essential
