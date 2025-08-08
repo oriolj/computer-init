@@ -101,6 +101,8 @@ packages:
       - memcached
       - docker
       - docker-compose
+      - python-pipenv
+      - pyenv
     ubuntu:
       - python3-pip
       - python3-venv
@@ -231,3 +233,17 @@ package_map:
     archlinux: docker-compose
     fedora: docker-compose
     darwin: docker-compose
+  python-pipenv:
+    default: python-pipenv
+    ubuntu: pipenv
+    debian: pipenv
+    archlinux: python-pipenv
+    fedora: pipenv
+    darwin: pipenv
+  pyenv:
+    default: pyenv
+    ubuntu: pyenv
+    debian: pyenv
+    archlinux: pyenv
+    fedora: pyenv
+    darwin: pyenv
