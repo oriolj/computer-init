@@ -74,6 +74,7 @@ packages:
       - vlc
       - vlc-plugin-all
       - cheese
+      - gnu-netcat
     darwin:
       - coreutils
       - gnu-tar
