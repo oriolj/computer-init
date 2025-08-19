@@ -139,6 +139,7 @@ packages:
       - rust
       - uv
       - extra/python-poetry
+      - postgresql
     darwin:
       - python@3.11
       - node
@@ -187,6 +188,7 @@ packages:
       - libreoffice-fresh
       - aur/repomix
       - kuro
+      - aur/ventoy-bin
     darwin:
       - the_silver_searcher
 
