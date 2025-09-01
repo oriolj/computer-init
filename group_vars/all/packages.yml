@@ -5,6 +5,7 @@ packages:
     common:
       - curl
       - wget
+      - aria2
       - git
       - vim
       - tmux
