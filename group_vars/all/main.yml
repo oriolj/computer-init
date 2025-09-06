@@ -87,6 +87,8 @@ aur_packages:
   - zoom
   - brave-bin
   - ttf-meslo-nerd-font-powerlevel10k
+  - ticktick
+  - obsidian
 
 # Package definitions for different operating systems
 packages:
