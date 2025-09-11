@@ -36,6 +36,7 @@ packages:
       - eog
       - libheif1
       - vlc
+      - flameshot
     debian:
       - build-essential
       - software-properties-common
@@ -49,6 +50,7 @@ packages:
       - eog
       - libheif1
       - vlc
+      - flameshot
     fedora:
       - gcc
       - gcc-c++
@@ -61,6 +63,7 @@ packages:
       - eog
       - libheif
       - vlc
+      - flameshot
     arch:
       - base-devel
       - net-tools
@@ -76,6 +79,7 @@ packages:
       - vlc-plugin-all
       - cheese
       - gnu-netcat
+      - flameshot
     darwin:
       - coreutils
       - gnu-tar
