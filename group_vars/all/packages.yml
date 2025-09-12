@@ -109,6 +109,7 @@ packages:
       - docker-compose
       - python-pipenv
       - pyenv
+      - lazydocker
     ubuntu:
       - python3-pip
       - python3-venv
@@ -176,6 +177,7 @@ packages:
       - keepassxc
       - google-chrome
       - vorta
+      - pinta
     ubuntu:
       - silversearcher-ag
     debian:
