@@ -21,6 +21,7 @@ packages:
       - nload
       - nethogs
       - pigz
+      - pwgen
     ubuntu:
       - build-essential
       - software-properties-common
