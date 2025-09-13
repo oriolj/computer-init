@@ -229,6 +229,7 @@ packages:
       - bottom
       - zoxide
       - handbrake
+      - deskflow
     ubuntu:
       - silversearcher-ag
     debian:

@@ -178,6 +178,7 @@ packages:
       - google-chrome
       - vorta
       - pinta
+      - deskflow
     ubuntu:
       - silversearcher-ag
     debian:
