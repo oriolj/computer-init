@@ -89,6 +89,7 @@ aur_packages:
   - ttf-meslo-nerd-font-powerlevel10k
   - ticktick
   - obsidian
+  - localsend-bin
 
 # Package definitions for different operating systems
 packages:
@@ -227,6 +228,7 @@ packages:
       - procs
       - bottom
       - zoxide
+      - handbrake
     ubuntu:
       - silversearcher-ag
     debian:
