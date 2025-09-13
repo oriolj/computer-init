@@ -198,6 +198,7 @@ packages:
       - aur/repomix
       - kuro
       - aur/ventoy-bin
+      - aur/makemkv
     darwin:
       - the_silver_searcher
 
