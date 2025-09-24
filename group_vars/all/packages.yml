@@ -179,6 +179,7 @@ packages:
       - vorta
       - pinta
       - deskflow
+      - yt-dlp
     ubuntu:
       - silversearcher-ag
     debian:
