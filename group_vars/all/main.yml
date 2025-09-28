@@ -3,6 +3,10 @@
 user: "{{ lookup('env', 'USER') }}"
 home_dir: "{{ lookup('env', 'HOME') }}"
 
+# User-specific shell configuration
+user_shell_overrides:
+  oriol: "/usr/bin/fish"
+
 # Dotfiles configuration
 dotfiles_repo: ""  # Set to your dotfiles repo, e.g., "https://github.com/username/dotfiles.git"
 dotfiles_path: "{{ home_dir }}/.dotfiles"
