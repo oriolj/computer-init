@@ -84,6 +84,8 @@ packages:
       - gnu-netcat
       - flameshot
       - ttf-font-awesome
+      - ttf-nerd-fonts-symbols-mono
+      - nerd-fonts
     darwin:
       - coreutils
       - gnu-tar
