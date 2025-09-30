@@ -83,6 +83,7 @@ packages:
       - cheese
       - gnu-netcat
       - flameshot
+      - ttf-font-awesome
     darwin:
       - coreutils
       - gnu-tar
