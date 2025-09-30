@@ -10,6 +10,8 @@ packages:
       - vim
       - tmux
       - htop
+      - btop
+      - s-tui
       - tree
       - unzip
       - jq
