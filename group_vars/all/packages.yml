@@ -24,6 +24,7 @@ packages:
       - nethogs
       - pigz
       - pwgen
+      - kitty
     ubuntu:
       - build-essential
       - software-properties-common
