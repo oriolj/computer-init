@@ -118,6 +118,7 @@ packages:
       - pyenv
       - lazydocker
       - git-lfs
+      - ngrok
     ubuntu:
       - python3-pip
       - python3-venv
