@@ -191,6 +191,7 @@ packages:
       - deskflow
       - yt-dlp
       - veracrypt
+      - gimp
     ubuntu:
       - silversearcher-ag
     debian:
