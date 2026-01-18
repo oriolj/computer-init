@@ -26,6 +26,7 @@ packages:
       - pwgen
       - kitty
       - less
+      - cups
     ubuntu:
       - build-essential
       - software-properties-common
