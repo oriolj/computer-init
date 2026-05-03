@@ -19,7 +19,7 @@ A comprehensive Ansible-based solution for automating the setup and configuratio
 - User directory structure
 
 ### Shell Environment
-- Zsh installation and configuration
+- Zsh and Fish both installed; login shell picked per-user via `user_shell_overrides`
 - Oh My Zsh framework
 - Powerlevel10k theme
 - Popular plugins (git, docker, kubectl, fzf, autojump)
@@ -44,7 +44,8 @@ A comprehensive Ansible-based solution for automating the setup and configuratio
 ### Additional Services
 - **Tailscale**: Zero-config VPN
 - **Syncthing**: File synchronization
-- **Dotfiles**: Configuration management
+- **Dotfiles**: Clones a remote dotfiles repo and runs its `sync-dotfiles.sh restore` to deploy configs into `~/`
+- **Extras**: Curated extra apps (CLI tools, GUI apps, AUR packages on Arch)
 
 ## Quick Start
 
@@ -58,8 +59,8 @@ A comprehensive Ansible-based solution for automating the setup and configuratio
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/ansible-computer-init.git
-cd ansible-computer-init
+git clone https://github.com/oriolj/computer-init.git
+cd computer-init
 ```
 
 2. Run the bootstrap script:
@@ -90,27 +91,28 @@ Edit `group_vars/all/main.yml`:
 
 ```yaml
 # User settings
-user: "{{ ansible_user_id }}"
-dotfiles_repo: "https://github.com/yourusername/dotfiles.git"
+user: "{{ lookup('env', 'USER') }}"
 
-# Shell configuration  
+# Dotfiles — cloned and applied via the repo's own sync-dotfiles.sh restore
+dotfiles_repo: "https://github.com/oriolj/dotfiles.git"
+dotfiles_path: "{{ home_dir }}/git/oriolj/dotfiles"
+dotfiles_branch: "master"
+apply_dotfiles_restore: true   # runs sync-dotfiles.sh restore --all --yes after clone
+deploy_default_configs: false  # skip the role's stock vimrc/tmux/init.vim templates
+
+# Shell — login shell per-user (oriol → fish), fallback default_shell
+default_shell: "/bin/zsh"
+user_shell_overrides:
+  oriol: "/usr/bin/fish"
 oh_my_zsh_theme: "powerlevel10k/powerlevel10k"
-oh_my_zsh_plugins:
-  - git
-  - docker
-  - kubectl
-
-# Development tools
-languages:
-  - python
-  - nodejs
-  - go
-  - rust
 
 # Services
 install_tailscale: true
 install_syncthing: true
 ```
+
+Cross-platform package lists are in `group_vars/all/packages.yml`
+(`packages.{base,development,extras}.{common,<distro>}`). Edit there, not in `main.yml`.
 
 ### Sensitive Data
 
@@ -128,16 +130,21 @@ ansible-vault encrypt group_vars/all/vault.yml
 
 ## Available Tags
 
-Run specific components using tags:
+Run specific components using tags. Each role has a primary tag and an alias:
 
-- `base` - Base system configuration
-- `shell` - Zsh and Oh My Zsh setup
-- `ssh` - SSH server configuration
-- `development` - Development tools
-- `docker` - Docker installation
-- `dotfiles` - Dotfiles management
-- `tailscale` - Tailscale VPN
-- `syncthing` - File synchronization
+| Role          | Tags                  |
+|---------------|-----------------------|
+| `base`        | `base`, `system`      |
+| `shell`       | `shell`, `zsh`        |
+| `ssh`         | `ssh`, `security`     |
+| `development` | `development`, `dev`, `tools` |
+| `dotfiles`    | `dotfiles`, `config`  |
+| `extras`      | `extras`, `aur`       |
+| `tailscale`   | `tailscale`, `vpn`    |
+| `syncthing`   | `syncthing`, `sync`   |
+
+Note: there is no `docker` tag — Docker is installed as part of the `development` role
+(gated by `install_docker`).
 
 Example:
 ```bash
@@ -158,24 +165,27 @@ Updates all installed packages and tools.
 ## Directory Structure
 
 ```
-ansible-computer-init/
+computer-init/
 ├── ansible.cfg              # Ansible configuration
 ├── bootstrap.sh             # Initial setup script
-├── inventory/               # Inventory configuration
-├── group_vars/              # Variables
-│   └── all/
-│       ├── main.yml        # Main configuration
-│       ├── packages.yml    # Package definitions
-│       └── vault.yml       # Encrypted secrets
-├── roles/                   # Ansible roles
-│   ├── base/               # Base system setup
-│   ├── shell/              # Shell configuration
-│   ├── ssh/                # SSH setup
-│   ├── development/        # Dev tools
-│   ├── dotfiles/           # Dotfiles management
-│   ├── tailscale/          # Tailscale VPN
-│   └── syncthing/          # File sync
-└── playbooks/              # Playbooks
+├── inventory/hosts.yml      # Inventory (defaults to localhost)
+├── group_vars/all/
+│   ├── main.yml             # User settings, feature flags, AUR list, SSH keys
+│   ├── packages.yml         # Cross-platform package lists + package_map
+│   └── vault.yml            # Encrypted secrets (create from vault.yml.example)
+├── roles/
+│   ├── base/                # Packages, firewall, timezone, dirs, yay (Arch)
+│   ├── shell/               # Zsh + Oh My Zsh + Powerlevel10k, Fish
+│   ├── ssh/                 # sshd config, authorized_keys, ssh-agent
+│   ├── development/         # Dev tools, languages, Docker, VS Code, Git
+│   ├── dotfiles/            # Clone dotfiles repo + sync-dotfiles.sh restore
+│   ├── extras/              # Extra packages incl. AUR
+│   ├── tailscale/           # Tailscale VPN
+│   └── syncthing/           # File sync
+└── playbooks/
+    ├── site.yml             # Main playbook
+    ├── bootstrap.yml        # Minimal pre-Ansible setup
+    └── update.yml           # System / shell-plugin updates
 ```
 
 ## Customization
@@ -221,6 +231,22 @@ packages:
     ubuntu:
       - ubuntu-specific-package
 ```
+
+### Dotfiles
+
+The `dotfiles` role clones `dotfiles_repo` (default: `https://github.com/oriolj/dotfiles.git`)
+into `dotfiles_path` and, when `apply_dotfiles_restore: true`, runs that repo's
+`sync-dotfiles.sh restore --all --yes` to deploy configs into `~/`.
+
+> **Heads up:** `sync-dotfiles.sh restore` does `rsync --delete` on tracked
+> directories, so it mirrors the repo into `~/.config/...` and removes anything
+> not in the repo. Safe on a fresh machine; on an existing host preview first:
+> `cd $dotfiles_path && ./sync-dotfiles.sh restore --dry-run`.
+
+To use your own dotfiles repo, override `dotfiles_repo`/`dotfiles_branch` in
+`main.yml`. Set `apply_dotfiles_restore: false` to skip the restore step (the
+repo will still be cloned). Set `deploy_default_configs: true` to additionally
+write the role's stock `vimrc.j2` / `tmux.conf.j2` / `init.vim.j2` templates.
 
 ### Creating New Roles
 

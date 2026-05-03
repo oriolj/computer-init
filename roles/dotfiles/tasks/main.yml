@@ -2,7 +2,19 @@
 - name: Check if dotfiles repository is configured
   debug:
     msg: "Dotfiles repository: {{ dotfiles_repo | default('Not configured') }}"
-  
+
+- name: Ensure dotfiles parent directory exists
+  file:
+    path: "{{ dotfiles_path | dirname }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  become: false
+  when:
+    - dotfiles_repo is defined
+    - dotfiles_repo != ""
+
 - name: Clone dotfiles repository
   git:
     repo: "{{ dotfiles_repo }}"
@@ -10,9 +22,39 @@
     version: "{{ dotfiles_branch }}"
     update: yes
   become: false
-  when: 
+  when:
     - dotfiles_repo is defined
     - dotfiles_repo != ""
+
+- name: Ensure rsync is installed (required by sync-dotfiles.sh)
+  package:
+    name: rsync
+    state: present
+  become: "{{ ansible_os_family != 'Darwin' }}"
+  when:
+    - apply_dotfiles_restore | default(false)
+    - dotfiles_repo is defined
+    - dotfiles_repo != ""
+
+- name: Check for sync-dotfiles.sh in the repo
+  stat:
+    path: "{{ dotfiles_path }}/sync-dotfiles.sh"
+  register: sync_script
+  when:
+    - apply_dotfiles_restore | default(false)
+    - dotfiles_repo is defined
+    - dotfiles_repo != ""
+
+- name: Run sync-dotfiles.sh restore (deploys configs into $HOME)
+  command: ./sync-dotfiles.sh restore --all --yes
+  args:
+    chdir: "{{ dotfiles_path }}"
+  become: false
+  when:
+    - apply_dotfiles_restore | default(false)
+    - sync_script is defined
+    - sync_script.stat is defined
+    - sync_script.stat.exists | default(false)
 
 - name: Create dotfiles directory if not using repo
   file:

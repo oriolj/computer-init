@@ -8,9 +8,16 @@ user_shell_overrides:
   oriol: "/usr/bin/fish"
 
 # Dotfiles configuration
-dotfiles_repo: ""  # Set to your dotfiles repo, e.g., "https://github.com/username/dotfiles.git"
-dotfiles_path: "{{ home_dir }}/.dotfiles"
-dotfiles_branch: "main"
+dotfiles_repo: "https://github.com/oriolj/dotfiles.git"
+dotfiles_path: "{{ home_dir }}/git/oriolj/dotfiles"
+dotfiles_branch: "master"
+# Run sync-dotfiles.sh restore after cloning to deploy configs into ~/.
+# The script uses rsync --delete on tracked directories — review with
+# `./sync-dotfiles.sh restore --dry-run` first if the host already has configs.
+apply_dotfiles_restore: true
+# The oriolj/dotfiles repo ships its own tmux.conf, vimrc, etc., so skip
+# the role's default Jinja templates that would otherwise overwrite them.
+deploy_default_configs: false
 
 # Shell configuration
 default_shell: "/bin/zsh"
@@ -95,175 +102,5 @@ aur_packages:
   - obsidian
   - localsend-bin
 
-# Package definitions for different operating systems
-packages:
-  base:
-    common:
-      - curl
-      - wget
-      - git
-      - vim
-      - tmux
-      - htop
-      - tree
-      - unzip
-      - jq
-      - ncdu
-      - rsync
-      - openssh-client
-      - nfs-utils
-      - mosh
-      - pigz
-    ubuntu:
-      - build-essential
-      - software-properties-common
-      - apt-transport-https
-      - ca-certificates
-      - gnupg
-      - lsb-release
-      - net-tools
-      - dnsutils
-      - firefox
-      - chromium-browser
-    debian:
-      - build-essential
-      - software-properties-common
-      - apt-transport-https
-      - ca-certificates
-      - gnupg
-      - lsb-release
-      - net-tools
-      - dnsutils
-    fedora:
-      - gcc
-      - gcc-c++
-      - make
-      - kernel-devel
-      - dnf-plugins-core
-      - util-linux-user
-      - bind-utils
-    arch:
-      - base-devel
-      - net-tools
-      - bind
-      - firefox
-      - chromium
-      - discord
-      - dosfstools
-      - gparted
-      - btrfs-progs
-      - ntfs-3g
-      - exfatprogs
-    darwin:
-      - coreutils
-      - gnu-tar
-      - gnu-sed
-      - gawk
-      - gnutls
-      - gnu-indent
-      - gnu-getopt
-      - findutils
-      - bash
-      - grep
-      - wget
-      - curl
-
-  development:
-    common:
-      - neovim
-      - ripgrep
-      - fzf
-      - httpie
-      - direnv
-      - lazygit
-    ubuntu:
-      - python3-pip
-      - python3-venv
-      - python3-dev
-      - nodejs
-      - npm
-      - golang
-      - rustc
-      - cargo
-    debian:
-      - python3-pip
-      - python3-venv
-      - python3-dev
-      - nodejs
-      - npm
-      - golang
-      - rustc
-      - cargo
-    fedora:
-      - python3-pip
-      - python3-devel
-      - nodejs
-      - npm
-      - golang
-      - rust
-      - cargo
-    arch:
-      - python-pip
-      - nodejs
-      - npm
-      - go
-      - rust
-    darwin:
-      - python@3.11
-      - node
-      - go
-      - rust
-      - fd
-      - bat
-      - exa
-      - jq
-      - tree
-      - htop
-      - tmux
-      - git
-
-  extras:
-    common:
-      - tig
-      - tldr
-      - ncdu
-      - duf
-      - dust
-      - procs
-      - bottom
-      - zoxide
-      - handbrake
-      - deskflow
-    ubuntu:
-      - silversearcher-ag
-    debian:
-      - silversearcher-ag
-    fedora:
-      - the_silver_searcher
-    arch:
-      - the_silver_searcher
-      - slack-desktop-wayland
-    darwin:
-      - the_silver_searcher
-
-# Package name mappings for cross-platform compatibility
-package_map:
-  fd-find:
-    default: fd-find
-    arch: fd
-    fedora: fd-find
-    darwin: fd
-  bat:
-    default: bat
-    ubuntu: bat
-    debian: bat
-    arch: bat
-    fedora: bat
-    darwin: bat
-  exa:
-    default: exa
-    ubuntu: exa
-    debian: exa
-    arch: exa
-    fedora: exa
-    darwin: exa
+# Cross-platform package lists and `package_map` live in `packages.yml`,
+# which is loaded after this file and is the source of truth for those keys.

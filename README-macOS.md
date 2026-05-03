@@ -35,8 +35,8 @@ This project supports macOS with some limitations and specific considerations.
 
 1. **Clone and setup:**
 ```bash
-git clone https://github.com/yourusername/ansible-computer-init.git
-cd ansible-computer-init
+git clone https://github.com/oriolj/computer-init.git
+cd computer-init
 ./bootstrap.sh
 ```
 

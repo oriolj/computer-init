@@ -19,7 +19,10 @@ ansible-playbook playbooks/site.yml --ask-become-pass
 # Run specific components using tags
 ansible-playbook playbooks/site.yml --tags "shell,development" --ask-become-pass
 
-# Available tags: base, shell, ssh, development, docker, dotfiles, tailscale, syncthing, extras
+# Role tags (each role is also reachable by an alias):
+#   base (system), shell (zsh), ssh (security), development (dev, tools),
+#   dotfiles (config), extras (aur), tailscale (vpn), syncthing (sync)
+# There is no `docker` tag — Docker installs as part of the `development` role.
 ```
 
 ### Development Commands
@@ -53,9 +56,9 @@ ansible-playbook playbooks/site.yml --list-tags
 ## Architecture
 
 ### Configuration Structure
-- **`group_vars/all/main.yml`**: Primary configuration file containing user settings, package selections, and feature flags
-- **`group_vars/all/packages.yml`**: Cross-platform package mappings handling distribution-specific package names
-- **`inventory/hosts.yml`**: Ansible inventory (defaults to localhost)
+- **`group_vars/all/main.yml`**: User settings, feature flags, AUR package list, SSH keys, vault references. Does NOT define `packages` or `package_map` — those live in `packages.yml`.
+- **`group_vars/all/packages.yml`**: Cross-platform package lists (`packages.{base,development,extras}.{common,ubuntu,debian,fedora,arch,darwin}`) and `package_map` for name remapping. Loaded after `main.yml` and is the source of truth for those keys.
+- **`inventory/hosts.yml`**: Ansible inventory (defaults to localhost). Referenced from `ansible.cfg`.
 
 ### Role Organization
 Each role in `roles/` is self-contained with:
@@ -75,6 +78,8 @@ The project uses a custom `package_map` structure to handle package name differe
 2. **OS-Specific Task Inclusion**: Conditional includes based on `ansible_os_family` or `ansible_distribution`
 3. **Service Management**: Handles both systemd (Linux) and launchd (macOS) services
 4. **Modular Feature Flags**: Roles can be enabled/disabled via variables (e.g., `install_tailscale: true`)
+5. **Dual Shell Setup**: The `shell` role installs both Zsh (with Oh My Zsh + Powerlevel10k) and Fish. The login shell is picked from `user_shell_overrides[user]` in `main.yml` (falling back to `default_shell`). The `oriol` user is set to fish.
+6. **Dotfiles via External Repo**: The `dotfiles` role clones `dotfiles_repo` into `dotfiles_path` and runs that repo's `sync-dotfiles.sh restore --all --yes` when `apply_dotfiles_restore` is true. The role's stock Jinja templates (`vimrc.j2`, `tmux.conf.j2`, `init.vim.j2`) only deploy when `deploy_default_configs` is true — disabled in `main.yml` because the dotfiles repo ships its own.
 
 ### Important Files
 - `roles/base/tasks/install-packages-with-mapping.yml`: Core package mapping logic
