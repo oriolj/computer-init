@@ -27,6 +27,7 @@ packages:
       - kitty
       - less
       - cups
+      - powertop
     ubuntu:
       - build-essential
       - software-properties-common
