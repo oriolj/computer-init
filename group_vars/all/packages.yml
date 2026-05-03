@@ -90,6 +90,14 @@ packages:
       - ttf-font-awesome
       - ttf-nerd-fonts-symbols-mono
       - nerd-fonts
+      - aur/noctalia-shell
+      - extra/niri
+      - hyprland
+      - greetd-tuigreet
+      - ddcutil
+      - power-profiles-daemon
+      - wlsunset
+      - cliphist
     darwin:
       - coreutils
       - gnu-tar

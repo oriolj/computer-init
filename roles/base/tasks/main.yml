@@ -39,6 +39,18 @@
   vars:
     package_list: "{{ packages.base.common + packages.base[ansible_distribution | lower] | default([]) }}"
 
+- name: Configure greetd as default login manager (Arch)
+  include_tasks: greetd-arch.yml
+  when: ansible_os_family == 'Archlinux'
+
+- name: Enable power-profiles-daemon (Arch)
+  systemd:
+    name: power-profiles-daemon.service
+    enabled: yes
+    state: started
+  become: yes
+  when: ansible_os_family == 'Archlinux'
+
 - name: Set timezone
   timezone:
     name: "{{ timezone }}"

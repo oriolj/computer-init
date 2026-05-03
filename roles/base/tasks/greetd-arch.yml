@@ -1,0 +1,41 @@
+---
+- name: Deploy greetd config (tuigreet)
+  template:
+    src: greetd-config.toml.j2
+    dest: /etc/greetd/config.toml
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  become: yes
+
+- name: Gather service facts
+  service_facts:
+
+- name: Disable other login managers if present
+  systemd:
+    name: "{{ item }}"
+    enabled: no
+    state: stopped
+  loop:
+    - sddm.service
+    - lightdm.service
+    - lxdm.service
+    - ly.service
+  when: item in ansible_facts.services
+  become: yes
+
+- name: Mask gdm so it cannot start
+  systemd:
+    name: gdm.service
+    enabled: no
+    state: stopped
+    masked: yes
+  become: yes
+  failed_when: false
+
+- name: Enable greetd as default login manager
+  systemd:
+    name: greetd.service
+    enabled: yes
+  become: yes
