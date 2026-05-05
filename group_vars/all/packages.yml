@@ -84,7 +84,6 @@ packages:
       - ttf-font-awesome
       - ttf-nerd-fonts-symbols-mono
       - nerd-fonts
-      - greetd-tuigreet
       - ghostty
       - aur/localsend-bin
       - ddcutil
@@ -233,6 +232,7 @@ packages:
       - gedit
       - eog
       - cheese
+      - gdm
     darwin: []
 
   niri:
@@ -248,6 +248,8 @@ packages:
       - seahorse
       - xdg-desktop-portal-gnome
       - wl-clipboard
+      - greetd
+      - greetd-tuigreet
     darwin: []
 
   hyprland:
@@ -265,6 +267,8 @@ packages:
       - swayidle
       - swaybg
       - swaylock
+      - greetd
+      - greetd-tuigreet
     darwin: []
 
 # Package name mappings for cross-platform compatibility
