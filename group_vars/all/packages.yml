@@ -22,12 +22,16 @@ packages:
       - iotop
       - nload
       - nethogs
+      - bmon
       - pigz
       - pwgen
       - kitty
+      - alacritty
       - less
       - cups
       - powertop
+      - fastfetch
+      - speedtest-cli
     ubuntu:
       - build-essential
       - software-properties-common
@@ -39,8 +43,6 @@ packages:
       - dnsutils
       - firefox
       - chromium-browser
-      - gedit
-      - eog
       - libheif1
       - vlc
       - flameshot
@@ -53,8 +55,6 @@ packages:
       - lsb-release
       - net-tools
       - dnsutils
-      - gedit
-      - eog
       - libheif1
       - vlc
       - flameshot
@@ -66,8 +66,6 @@ packages:
       - dnf-plugins-core
       - util-linux-user
       - bind-utils
-      - gedit
-      - eog
       - libheif
       - vlc
       - flameshot
@@ -78,25 +76,19 @@ packages:
       - firefox
       - chromium
       - discord
-      - gnome-extra
-      - gedit
-      - eog
       - libheif
       - vlc
       - vlc-plugin-all
-      - cheese
       - gnu-netcat
       - flameshot
       - ttf-font-awesome
       - ttf-nerd-fonts-symbols-mono
       - nerd-fonts
-      - aur/noctalia-shell
-      - extra/niri
-      - hyprland
       - greetd-tuigreet
+      - ghostty
+      - aur/localsend-bin
       - ddcutil
       - power-profiles-daemon
-      - wlsunset
       - cliphist
     darwin:
       - coreutils
@@ -185,7 +177,6 @@ packages:
     common:
       - tig
       - tldr
-      - ncdu
       - duf
       - dust
       - procs
@@ -225,6 +216,56 @@ packages:
       - aur/makemkv
     darwin:
       - the_silver_searcher
+
+  gnome:
+    common: []
+    ubuntu:
+      - gedit
+      - eog
+    debian:
+      - gedit
+      - eog
+    fedora:
+      - gedit
+      - eog
+    arch:
+      - gnome-extra
+      - gedit
+      - eog
+      - cheese
+    darwin: []
+
+  niri:
+    common: []
+    ubuntu: []
+    debian: []
+    fedora: []
+    arch:
+      - extra/niri
+      - aur/noctalia-shell
+      - mako
+      - wlsunset
+      - seahorse
+      - xdg-desktop-portal-gnome
+      - wl-clipboard
+    darwin: []
+
+  hyprland:
+    common: []
+    ubuntu: []
+    debian: []
+    fedora: []
+    arch:
+      - hyprland
+      - wlsunset
+      - seahorse
+      - xdg-desktop-portal-gnome
+      - wl-clipboard
+      - fuzzel
+      - swayidle
+      - swaybg
+      - swaylock
+    darwin: []
 
 # Package name mappings for cross-platform compatibility
 package_map:
