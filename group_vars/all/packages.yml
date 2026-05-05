@@ -233,13 +233,9 @@ packages:
       - eog
       - cheese
       - gdm
-    darwin: []
 
   niri:
     common: []
-    ubuntu: []
-    debian: []
-    fedora: []
     arch:
       - extra/niri
       - aur/noctalia-shell
@@ -250,13 +246,9 @@ packages:
       - wl-clipboard
       - greetd
       - greetd-tuigreet
-    darwin: []
 
   hyprland:
     common: []
-    ubuntu: []
-    debian: []
-    fedora: []
     arch:
       - hyprland
       - wlsunset
@@ -269,7 +261,6 @@ packages:
       - swaylock
       - greetd
       - greetd-tuigreet
-    darwin: []
 
 # Package name mappings for cross-platform compatibility
 package_map:
