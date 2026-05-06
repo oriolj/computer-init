@@ -118,6 +118,8 @@ packages:
       - python-pipenv
       - pyenv
       - lazydocker
+      - lazygit
+      - yazi
       - git-lfs
       - ngrok
       - glow
