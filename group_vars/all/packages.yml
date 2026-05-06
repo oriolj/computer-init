@@ -213,6 +213,7 @@ packages:
       - kuro
       - aur/ventoy-bin
       - aur/makemkv
+      - aur/brave-bin
     darwin:
       - the_silver_searcher
 
