@@ -255,14 +255,14 @@ packages:
     common: []
     arch:
       - hyprland
-      - wlsunset
+      - extra/hyprsunset
       - seahorse
       - xdg-desktop-portal-gnome
       - wl-clipboard
       - fuzzel
-      - swayidle
+      - extra/hypridle
       - swaybg
-      - swaylock
+      - extra/hyprlock
       - greetd
       - greetd-tuigreet
 
