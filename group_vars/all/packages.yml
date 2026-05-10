@@ -89,6 +89,7 @@ packages:
       - ddcutil
       - power-profiles-daemon
       - cliphist
+      - extra/smartmontools
     darwin:
       - coreutils
       - gnu-tar
