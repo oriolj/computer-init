@@ -32,6 +32,7 @@ packages:
       - powertop
       - fastfetch
       - speedtest-cli
+      - time
     ubuntu:
       - build-essential
       - software-properties-common
@@ -323,3 +324,10 @@ package_map:
     archlinux: pyenv
     fedora: pyenv
     darwin: pyenv
+  time:
+    default: time
+    ubuntu: time
+    debian: time
+    archlinux: time
+    fedora: time
+    darwin: gnu-time
