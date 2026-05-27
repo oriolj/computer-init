@@ -1,0 +1,12 @@
+---
+- name: Install dnf copr plugin (Fedora)
+  dnf:
+    name: 'dnf-command(copr)'
+    state: present
+  become: yes
+
+- name: Enable LocalSend COPR repository (Fedora)
+  command: dnf copr enable -y dregetas/localsend
+  args:
+    creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:dregetas:localsend.repo
+  become: yes

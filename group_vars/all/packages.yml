@@ -70,6 +70,7 @@ packages:
       - libheif
       - vlc
       - flameshot
+      - localsend
     arch:
       - base-devel
       - net-tools
@@ -86,11 +87,13 @@ packages:
       - ttf-nerd-fonts-symbols-mono
       - nerd-fonts
       - ghostty
-      - aur/localsend-bin
+      - aur/localsend
+      - aur/localsend-go
       - ddcutil
       - power-profiles-daemon
       - cliphist
       - extra/smartmontools
+      - extra/playerctl
     darwin:
       - coreutils
       - gnu-tar

@@ -34,6 +34,10 @@
   include_tasks: install-yay.yml
   when: ansible_os_family == 'Archlinux'
 
+- name: Enable LocalSend COPR repository (Fedora)
+  include_tasks: localsend-copr-fedora.yml
+  when: ansible_os_family == 'RedHat'
+
 - name: Install base packages
   include_tasks: install-packages-with-mapping.yml
   vars:

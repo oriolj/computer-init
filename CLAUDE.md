@@ -73,6 +73,8 @@ The project uses a custom `package_map` structure to handle package name differe
 - OS-specific overrides are applied when needed
 - Graceful fallback for unmapped packages
 
+**Using COPR on Fedora is OK.** When a package isn't in Fedora's default repos but a maintained COPR exists, enabling it is the preferred approach (mirrors how AUR is used on Arch). Pattern: install `dnf-command(copr)`, then `dnf copr enable -y <owner>/<project>` guarded by `creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:<owner>:<project>.repo`, then add the package to the relevant `packages.*.fedora` list. Examples: `roles/syncthing/tasks/install-redhat.yml` (decathorpe/syncthing) and `roles/base/tasks/localsend-copr-fedora.yml` (dregetas/localsend). For COPR repos that must be enabled before the shared `install-packages-with-mapping.yml` runs, wire the enable step into `roles/base/tasks/main.yml` ahead of "Install base packages".
+
 ### Key Patterns
 1. **Dynamic User Detection**: Uses `ansible_user_id` and environment variables rather than hardcoded usernames
 2. **OS-Specific Task Inclusion**: Conditional includes based on `ansible_os_family` or `ansible_distribution`
