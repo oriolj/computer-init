@@ -20,16 +20,7 @@ apply_dotfiles_restore: true
 deploy_default_configs: false
 
 # Shell configuration
-default_shell: "/bin/zsh"
-oh_my_zsh_theme: "powerlevel10k/powerlevel10k"
-oh_my_zsh_plugins:
-  - git
-  - docker
-  - kubectl
-  - zsh-autosuggestions
-  - zsh-syntax-highlighting
-  - autojump
-  - fzf
+default_shell: "/usr/bin/fish"
 
 # Development configuration
 install_development_tools: true
@@ -97,7 +88,6 @@ aur_packages:
   - slack-desktop
   - zoom
   - brave-bin
-  - ttf-meslo-nerd-font-powerlevel10k
   - ticktick
   - obsidian
   - localsend-bin

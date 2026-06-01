@@ -20,7 +20,7 @@ ansible-playbook playbooks/site.yml --ask-become-pass
 ansible-playbook playbooks/site.yml --tags "shell,development" --ask-become-pass
 
 # Role tags (each role is also reachable by an alias):
-#   base (system), shell (zsh), ssh (security), development (dev, tools),
+#   base (system), shell (fish), ssh (security), development (dev, tools),
 #   dotfiles (config), extras (aur), tailscale (vpn), syncthing (sync)
 # There is no `docker` tag — Docker installs as part of the `development` role.
 ```
@@ -73,14 +73,16 @@ The project uses a custom `package_map` structure to handle package name differe
 - OS-specific overrides are applied when needed
 - Graceful fallback for unmapped packages
 
-**Using COPR on Fedora is OK.** When a package isn't in Fedora's default repos but a maintained COPR exists, enabling it is the preferred approach (mirrors how AUR is used on Arch). Pattern: install `dnf-command(copr)`, then `dnf copr enable -y <owner>/<project>` guarded by `creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:<owner>:<project>.repo`, then add the package to the relevant `packages.*.fedora` list. Examples: `roles/syncthing/tasks/install-redhat.yml` (decathorpe/syncthing) and `roles/base/tasks/localsend-copr-fedora.yml` (dregetas/localsend). For COPR repos that must be enabled before the shared `install-packages-with-mapping.yml` runs, wire the enable step into `roles/base/tasks/main.yml` ahead of "Install base packages".
+**Using COPR on Fedora is OK.** When a package isn't in Fedora's default repos but a maintained COPR exists, enabling it is the preferred approach (mirrors how AUR is used on Arch). Pattern: install `dnf-command(copr)`, then `dnf copr enable -y <owner>/<project>` guarded by `creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:<owner>:<project>.repo`, then add the package to the relevant `packages.*.fedora` list. Examples: `roles/syncthing/tasks/install-redhat.yml` (decathorpe/syncthing) and `roles/base/tasks/nerd-fonts-copr-fedora.yml` (aquacash5/nerd-fonts — the font RPMs then live in `packages.base.fedora`). For COPR repos that must be enabled before the shared `install-packages-with-mapping.yml` runs, wire the enable step into `roles/base/tasks/main.yml` ahead of "Install base packages".
+
+**Caveat — a COPR can lag new Fedora releases.** A COPR may exist but have an *empty* build for a brand-new Fedora (the `fedora-NN-x86_64/` dir and repo metadata auto-scaffold with `packages="0"`), so the package silently won't install. Before relying on a COPR for the latest Fedora, verify it has actual RPMs (`dnf repoquery <pkg> --repoid="copr:..."`). When it doesn't, prefer a release-independent source — e.g. LocalSend on Fedora installs from Flathub via `roles/base/tasks/localsend-flatpak-fedora.yml` (uses `community.general.flatpak`/`flatpak_remote`) rather than the f44-empty dregetas/localsend COPR.
 
 ### Key Patterns
 1. **Dynamic User Detection**: Uses `ansible_user_id` and environment variables rather than hardcoded usernames
 2. **OS-Specific Task Inclusion**: Conditional includes based on `ansible_os_family` or `ansible_distribution`
 3. **Service Management**: Handles both systemd (Linux) and launchd (macOS) services
 4. **Modular Feature Flags**: Roles can be enabled/disabled via variables (e.g., `install_tailscale: true`)
-5. **Dual Shell Setup**: The `shell` role installs both Zsh (with Oh My Zsh + Powerlevel10k) and Fish. The login shell is picked from `user_shell_overrides[user]` in `main.yml` (falling back to `default_shell`). The `oriol` user is set to fish.
+5. **Shell Setup**: The `shell` role installs Fish (plus fzf and autojump, which both integrate with fish) and sets it as the login shell. The login shell is picked from `user_shell_overrides[user]` in `main.yml` (falling back to `default_shell`, which is `/usr/bin/fish`). Zsh / Oh My Zsh / Powerlevel10k were removed — fish is the only managed shell.
 6. **Dotfiles via External Repo**: The `dotfiles` role clones `dotfiles_repo` into `dotfiles_path` and runs that repo's `sync-dotfiles.sh restore --all --yes` when `apply_dotfiles_restore` is true. The role's stock Jinja templates (`vimrc.j2`, `tmux.conf.j2`, `init.vim.j2`) only deploy when `deploy_default_configs` is true — disabled in `main.yml` because the dotfiles repo ships its own.
 
 ### Important Files

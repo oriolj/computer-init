@@ -1,4 +1,11 @@
 ---
+- name: Ensure fish conf.d directory exists
+  file:
+    path: "{{ home_dir }}/.config/fish/conf.d"
+    state: directory
+    mode: '0755'
+  become: false
+
 - name: Install Python development tools
   package:
     name:
@@ -30,17 +37,14 @@
   become: false
   when: use_asdf | default(true)
 
-- name: Add asdf to shell
+- name: Add asdf to fish
   blockinfile:
-    path: "{{ home_dir }}/.zshrc"
-    block: |
-      # asdf version manager
-      . "$HOME/.asdf/asdf.sh"
-      # append completions to fpath
-      fpath=(${ASDF_DIR}/completions $fpath)
-      # initialise completions with ZSH's compinit
-      autoload -Uz compinit && compinit
-    marker: "# {mark} ANSIBLE MANAGED BLOCK - asdf"
+    path: "{{ home_dir }}/.config/fish/conf.d/asdf.fish"
     create: yes
+    mode: '0644'
+    block: |
+      # asdf version manager (sets up PATH, shims and completions)
+      source "$HOME/.asdf/asdf.fish"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - asdf"
   become: false
   when: use_asdf | default(true)

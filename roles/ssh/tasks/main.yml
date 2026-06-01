@@ -88,12 +88,20 @@
   become: false
   when: ansible_service_mgr == 'systemd'
 
-- name: Add SSH agent to shell profile
+- name: Ensure fish conf.d directory exists
+  file:
+    path: "{{ home_dir }}/.config/fish/conf.d"
+    state: directory
+    mode: '0755'
+  become: false
+
+- name: Add SSH agent to fish profile
   blockinfile:
-    path: "{{ home_dir }}/.zshrc"
+    path: "{{ home_dir }}/.config/fish/conf.d/ssh-agent.fish"
+    create: yes
+    mode: '0644'
     block: |
       # SSH Agent
-      export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+      set -gx SSH_AUTH_SOCK "$XDG_RUNTIME_DIR/ssh-agent.socket"
     marker: "# {mark} ANSIBLE MANAGED BLOCK - SSH Agent"
-    create: yes
   become: false

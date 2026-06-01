@@ -33,6 +33,7 @@ packages:
       - fastfetch
       - speedtest-cli
       - time
+      - gpsd
     ubuntu:
       - build-essential
       - software-properties-common
@@ -70,7 +71,12 @@ packages:
       - libheif
       - vlc
       - flameshot
-      - localsend
+      # Nerd Fonts via aquacash5/nerd-fonts COPR (enabled in base/main.yml)
+      - jet-brains-mono-nerd-fonts
+      - fira-code-nerd-fonts
+      - hack-nerd-fonts
+      - meslo-nerd-fonts
+      - nerd-fonts-symbols-only
     arch:
       - base-devel
       - net-tools
@@ -120,8 +126,6 @@ packages:
       - memcached
       - docker
       - docker-compose
-      - python-pipenv
-      - pyenv
       - lazydocker
       - lazygit
       - yazi
@@ -154,6 +158,7 @@ packages:
       - golang
       - rust
       - cargo
+      - uv
     arch:
       - python-pip
       - nodejs
@@ -167,6 +172,7 @@ packages:
       - postgresql
     darwin:
       - python@3.11
+      - uv
       - node
       - go
       - rust
@@ -294,6 +300,7 @@ package_map:
   openssh-client:
     default: openssh-client
     archlinux: openssh
+    fedora: openssh-clients
     darwin: openssh
   openssh-server:
     default: openssh-server
@@ -313,20 +320,6 @@ package_map:
     archlinux: docker-compose
     fedora: docker-compose
     darwin: docker-compose
-  python-pipenv:
-    default: python-pipenv
-    ubuntu: pipenv
-    debian: pipenv
-    archlinux: python-pipenv
-    fedora: pipenv
-    darwin: pipenv
-  pyenv:
-    default: pyenv
-    ubuntu: pyenv
-    debian: pyenv
-    archlinux: pyenv
-    fedora: pyenv
-    darwin: pyenv
   time:
     default: time
     ubuntu: time

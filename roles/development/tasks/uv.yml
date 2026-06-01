@@ -1,0 +1,18 @@
+---
+# uv is packaged on Fedora (dnf), Arch (pacman) and macOS (brew) and is
+# installed via the development package lists there. Debian/Ubuntu have no
+# apt package, so fall back to Astral's official installer when uv is not
+# already on PATH. The `which uv` guard keeps this idempotent and avoids a
+# duplicate ~/.local/bin copy on distros where the package already provided it.
+- name: Check whether uv is already on PATH
+  ansible.builtin.command: which uv
+  register: uv_check
+  changed_when: false
+  failed_when: false
+
+- name: Install uv via Astral installer (fallback when not packaged)
+  ansible.builtin.shell:
+    cmd: curl -LsSf https://astral.sh/uv/install.sh | sh
+    creates: "{{ home_dir }}/.local/bin/uv"
+  become: false
+  when: uv_check.rc != 0

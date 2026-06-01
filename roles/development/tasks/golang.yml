@@ -19,16 +19,16 @@
     - ansible_os_family != 'Darwin'
     - go_current_version.rc != 0 or go_current_version.stdout != go_version
 
-- name: Add Go to PATH
+- name: Add Go to fish PATH
   blockinfile:
-    path: "{{ home_dir }}/.zshrc"
+    path: "{{ home_dir }}/.config/fish/conf.d/golang.fish"
+    create: yes
+    mode: '0644'
     block: |
       # Go programming language
-      export PATH=$PATH:/usr/local/go/bin
-      export GOPATH=$HOME/go
-      export PATH=$PATH:$GOPATH/bin
+      set -gx GOPATH $HOME/go
+      fish_add_path /usr/local/go/bin $GOPATH/bin
     marker: "# {mark} ANSIBLE MANAGED BLOCK - Go"
-    create: yes
   become: false
 
 - name: Create Go workspace

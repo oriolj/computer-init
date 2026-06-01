@@ -18,14 +18,19 @@
   when: not rust_installed.stat.exists
   become: false
 
-- name: Add Rust to PATH
+- name: Add Rust to fish PATH
   blockinfile:
-    path: "{{ home_dir }}/.zshrc"
+    path: "{{ home_dir }}/.config/fish/conf.d/rust.fish"
+    create: yes
+    mode: '0644'
     block: |
       # Rust programming language
-      source "$HOME/.cargo/env"
+      if test -f "$HOME/.cargo/env.fish"
+          source "$HOME/.cargo/env.fish"
+      else
+          fish_add_path "$HOME/.cargo/bin"
+      end
     marker: "# {mark} ANSIBLE MANAGED BLOCK - Rust"
-    create: yes
   become: false
 
 - name: Install common Rust tools

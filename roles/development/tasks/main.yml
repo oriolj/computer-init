@@ -20,6 +20,10 @@
   include_tasks: languages.yml
   when: install_languages | default(true)
 
+- name: Ensure uv is installed (installer fallback for unpackaged distros)
+  include_tasks: uv.yml
+  when: install_languages | default(true)
+
 - name: Install VS Code
   include_tasks: vscode.yml
   when: install_vscode | default(true)

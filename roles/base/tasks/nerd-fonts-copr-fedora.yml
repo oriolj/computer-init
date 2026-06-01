@@ -1,0 +1,18 @@
+---
+# Fedora has no nerd-fonts in default repos. The aquacash5/nerd-fonts COPR
+# packages the full collection (one RPM per family) with proper Fedora 44
+# builds and fontconfig scriptlets (fc-cache runs on install). Verified
+# populated for f44 before adopting — see the COPR-lags-new-Fedora caveat in
+# CLAUDE.md. The font packages themselves live in packages.base.fedora and
+# install in the normal batch once this repo is enabled.
+- name: Install dnf copr plugin (Fedora)
+  ansible.builtin.dnf:
+    name: 'dnf-command(copr)'
+    state: present
+  become: yes
+
+- name: Enable aquacash5/nerd-fonts COPR repository (Fedora)
+  ansible.builtin.command: dnf copr enable -y aquacash5/nerd-fonts
+  args:
+    creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:aquacash5:nerd-fonts.repo
+  become: yes

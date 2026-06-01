@@ -3,12 +3,14 @@
   apt:
     name: ufw
     state: present
+  become: yes
   when: ansible_os_family == 'Debian'
 
 - name: Install firewalld (RedHat/Fedora)
   dnf:
     name: firewalld
     state: present
+  become: yes
   when: ansible_os_family == 'RedHat'
 
 - name: Configure UFW defaults
@@ -18,6 +20,7 @@
   loop:
     - { direction: 'incoming', policy: 'deny' }
     - { direction: 'outgoing', policy: 'allow' }
+  become: yes
   when: ansible_os_family == 'Debian'
 
 - name: Allow SSH through UFW
@@ -25,11 +28,13 @@
     rule: allow
     port: "{{ ssh_port | default(22) }}"
     proto: tcp
+  become: yes
   when: ansible_os_family == 'Debian'
 
 - name: Enable UFW
   ufw:
     state: enabled
+  become: yes
   when: ansible_os_family == 'Debian'
 
 - name: Start and enable firewalld
@@ -37,6 +42,7 @@
     name: firewalld
     state: started
     enabled: yes
+  become: yes
   when: ansible_os_family == 'RedHat'
 
 - name: Allow SSH through firewalld
@@ -45,4 +51,5 @@
     permanent: yes
     immediate: yes
     state: enabled
+  become: yes
   when: ansible_os_family == 'RedHat'

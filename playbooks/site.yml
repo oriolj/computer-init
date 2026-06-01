@@ -1,13 +1,13 @@
 ---
 - name: Computer Initialization Playbook
-  hosts: localhost
+  hosts: "{{ target | default('localhost') }}"
   gather_facts: yes
-  
+
   pre_tasks:
     - name: Set user and home directory
       set_fact:
-        user: "{{ lookup('env', 'USER') }}"
-        home_dir: "{{ lookup('env', 'HOME') }}"
+        user: "{{ ansible_user_id }}"
+        home_dir: "{{ ansible_env.HOME }}"
       tags: always
       
     - name: Debug user information
@@ -40,7 +40,7 @@
 
   roles:
     - { role: base, tags: ['base', 'system'] }
-    - { role: shell, tags: ['shell', 'zsh'] }
+    - { role: shell, tags: ['shell', 'fish'] }
     - { role: ssh, tags: ['ssh', 'security'] }
     - { role: development, tags: ['development', 'dev', 'tools'] }
     - { role: dotfiles, tags: ['dotfiles', 'config'] }
@@ -54,7 +54,7 @@
         msg:
           - "Computer initialization completed successfully!"
           - "You may need to log out and back in for some changes to take effect."
-          - "Run 'source ~/.zshrc' to reload shell configuration."
+          - "Run 'exec fish' or open a new terminal to load your shell configuration."
       tags: always
 
     - name: Check services status

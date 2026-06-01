@@ -127,6 +127,6 @@ if command -v xclip &> /dev/null; then
 fi
 
 # Custom functions source
-alias reload='source ~/.zshrc'
-alias zshconfig='${EDITOR:-vim} ~/.zshrc'
+alias reload='exec fish'
+alias fishconfig='${EDITOR:-vim} ~/.config/fish/config.fish'
 alias aliasconfig='${EDITOR:-vim} ~/.aliases'
