@@ -1,0 +1,22 @@
+---
+# lazygit, lazydocker and yazi aren't in Fedora's default repos. These COPRs
+# carry maintained Fedora 44 builds (verified populated before adopting — see
+# the COPR-lags-new-Fedora caveat in CLAUDE.md). The tools themselves live in
+# packages.development.common and install in the normal batch once enabled.
+- name: Install dnf copr plugin (Fedora)
+  ansible.builtin.dnf:
+    name: 'dnf-command(copr)'
+    state: present
+  become: yes
+
+- name: Enable development tool COPR repositories (Fedora)
+  ansible.builtin.command: "dnf copr enable -y {{ item.owner }}/{{ item.proj }}"
+  args:
+    creates: "/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:{{ item.owner }}:{{ item.proj }}.repo"
+  loop:
+    - { owner: 'atim', proj: 'lazygit' }
+    - { owner: 'atim', proj: 'lazydocker' }
+    - { owner: 'lihaohong', proj: 'yazi' }
+  loop_control:
+    label: "{{ item.owner }}/{{ item.proj }}"
+  become: yes

@@ -1,8 +1,16 @@
 ---
+- name: Enable development tool COPR repositories (Fedora)
+  include_tasks: copr-fedora.yml
+  when: ansible_distribution == 'Fedora'
+
 - name: Install development packages
+  # Install one at a time: an unavailable package (e.g. ngrok on Fedora, which
+  # has no default repo) fails only itself instead of poisoning the whole dnf
+  # transaction and silently dropping everything else under ignore_errors.
   package:
-    name: "{{ packages.development.common + packages.development[ansible_distribution | lower] | default([]) }}"
+    name: "{{ item }}"
     state: present
+  loop: "{{ packages.development.common + packages.development[ansible_distribution | lower] | default([]) }}"
   become: "{{ ansible_os_family != 'Darwin' }}"
   ignore_errors: yes
 
@@ -12,7 +20,7 @@
 
 - name: Install Docker
   include_tasks: docker.yml
-  when: 
+  when:
     - install_docker | default(true)
     - ansible_os_family != 'Darwin'
 

@@ -19,9 +19,9 @@
   become: "{{ ansible_os_family != 'Darwin' }}"
   ignore_errors: yes
 
-- name: Install exa
+- name: Install eza (maintained successor to exa)
   package:
-    name: exa
+    name: eza
     state: present
   become: "{{ ansible_os_family != 'Darwin' }}"
   ignore_errors: yes

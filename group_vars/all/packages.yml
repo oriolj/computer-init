@@ -178,7 +178,7 @@ packages:
       - rust
       - fd
       - bat
-      - exa
+      - eza
       - jq
       - tree
       - htop
@@ -290,13 +290,13 @@ package_map:
     arch: bat
     fedora: bat
     darwin: bat
-  exa:
-    default: exa
-    ubuntu: exa
-    debian: exa
-    arch: exa
-    fedora: exa
-    darwin: exa
+  eza:
+    default: eza
+    ubuntu: eza
+    debian: eza
+    arch: eza
+    fedora: eza
+    darwin: eza
   openssh-client:
     default: openssh-client
     archlinux: openssh
