@@ -39,12 +39,43 @@
     - tailscale_check.rc != 0
     - not (use_tailscale_install_script | default(true))
 
+- name: Silence interactive Tailscale GPG prompt (RedHat/Fedora)
+  # The official install script writes /etc/yum.repos.d/tailscale.repo with
+  # repo_gpgcheck=1, so dnf prompts to import the metadata-signing key on every
+  # refresh (the rpm-keyring import only covers package gpgcheck, not repo
+  # metadata). Import the key and turn repo_gpgcheck off — package signatures
+  # (gpgcheck=1) stay enforced; this matches the role's own yum_repository,
+  # which never set repo_gpgcheck.
+  when: ansible_os_family == 'RedHat'
+  block:
+    - name: Import Tailscale repository GPG key (RedHat/Fedora)
+      ansible.builtin.rpm_key:
+        key: https://pkgs.tailscale.com/stable/fedora/repo.gpg
+        state: present
+      become: yes
+
+    - name: Check for the Tailscale repo file (RedHat/Fedora)
+      ansible.builtin.stat:
+        path: /etc/yum.repos.d/tailscale.repo
+      register: tailscale_repo_file
+
+    - name: Disable repo_gpgcheck on the Tailscale repo (RedHat/Fedora)
+      ansible.builtin.ini_file:
+        path: /etc/yum.repos.d/tailscale.repo
+        section: tailscale-stable
+        option: repo_gpgcheck
+        value: '0'
+        no_extra_spaces: yes
+      become: yes
+      when: tailscale_repo_file.stat.exists
+
 - name: Start and enable Tailscale service
   systemd:
     name: tailscaled
     state: started
     enabled: yes
-  when: 
+  become: yes
+  when:
     - ansible_os_family != 'Darwin'
     - ansible_service_mgr == 'systemd'
 

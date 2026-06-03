@@ -1,14 +1,26 @@
 ---
+- name: Import Tailscale repository GPG key
+  ansible.builtin.rpm_key:
+    key: https://pkgs.tailscale.com/stable/fedora/repo.gpg
+    state: present
+  become: yes
+
 - name: Add Tailscale repository
-  yum_repository:
+  ansible.builtin.yum_repository:
     name: tailscale-stable
+    file: tailscale
     description: Tailscale stable
     baseurl: https://pkgs.tailscale.com/stable/fedora/$basearch
     enabled: yes
     gpgcheck: yes
+    # repo_gpgcheck off: avoids the interactive metadata-key prompt; package
+    # signatures (gpgcheck) stay enforced via the imported key above.
+    repo_gpgcheck: no
     gpgkey: https://pkgs.tailscale.com/stable/fedora/repo.gpg
+  become: yes
 
 - name: Install Tailscale
-  dnf:
+  ansible.builtin.dnf:
     name: tailscale
     state: present
+  become: yes
