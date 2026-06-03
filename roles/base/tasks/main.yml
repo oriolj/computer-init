@@ -34,10 +34,6 @@
   include_tasks: install-yay.yml
   when: ansible_os_family == 'Archlinux'
 
-- name: Enable Nerd Fonts COPR repository (Fedora)
-  include_tasks: nerd-fonts-copr-fedora.yml
-  when: ansible_os_family == 'RedHat'
-
 - name: Install base packages
   include_tasks: install-packages-with-mapping.yml
   vars:
@@ -45,6 +41,10 @@
 
 - name: Install LocalSend via Flathub (Fedora)
   include_tasks: localsend-flatpak-fedora.yml
+  when: ansible_os_family == 'RedHat'
+
+- name: Install Nerd Fonts via COPR (Fedora)
+  include_tasks: nerd-fonts-fedora.yml
   when: ansible_os_family == 'RedHat'
 
 - name: Configure greetd as default login manager (Arch)

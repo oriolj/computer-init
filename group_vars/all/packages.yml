@@ -71,12 +71,6 @@ packages:
       - libheif
       - vlc
       - flameshot
-      # Nerd Fonts via aquacash5/nerd-fonts COPR (enabled in base/main.yml)
-      - jet-brains-mono-nerd-fonts
-      - fira-code-nerd-fonts
-      - hack-nerd-fonts
-      - meslo-nerd-fonts
-      - nerd-fonts-symbols-only
     arch:
       - base-devel
       - net-tools
