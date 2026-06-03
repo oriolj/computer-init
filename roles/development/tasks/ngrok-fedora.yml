@@ -1,0 +1,16 @@
+---
+# ngrok publishes no official RPM/yum repo — only an apt repo (Debian) and a
+# direct static binary, which their docs route RPM distros to. Install that
+# official binary to /usr/local/bin. (The dev package batch's dnf attempt for
+# ngrok fails+skips harmlessly under per-item ignore_errors; this provides it.)
+- name: Set ngrok architecture (Fedora)
+  ansible.builtin.set_fact:
+    ngrok_arch: "{{ {'x86_64': 'amd64', 'aarch64': 'arm64', 'armv7l': 'arm', 'i386': '386'}[ansible_architecture] | default('amd64') }}"
+
+- name: Install ngrok from official binary (Fedora)
+  ansible.builtin.unarchive:
+    src: "https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-{{ ngrok_arch }}.tgz"
+    dest: /usr/local/bin
+    remote_src: yes
+    creates: /usr/local/bin/ngrok
+  become: yes

@@ -14,6 +14,10 @@
   become: "{{ ansible_os_family != 'Darwin' }}"
   ignore_errors: yes
 
+- name: Install ngrok (Fedora, official binary)
+  include_tasks: ngrok-fedora.yml
+  when: ansible_distribution == 'Fedora'
+
 - name: Install modern CLI tools
   include_tasks: cli-tools.yml
   when: install_development_tools | default(true)
