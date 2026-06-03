@@ -1,21 +1,27 @@
 ---
 # lazygit, lazydocker and yazi aren't in Fedora's default repos. Write the COPR
-# .repo files directly with yum_repository rather than `dnf copr enable`: the
-# plugin parses assumeyes / external-repo prompts differently on dnf4 vs dnf5,
-# so the shell route enabled repos on dnf4 but silently no-op'd on dnf5
-# (x1yogag9). yum_repository writes the ini file, which both dnf versions read.
-# Verified f44 builds before adopting — see the COPR-lags-new-Fedora caveat
-# in CLAUDE.md. The tools themselves live in packages.development.common and
-# install in the normal (per-item) dev batch once these repos exist.
+# .repo files directly with `copy` rather than `dnf copr enable`: the plugin
+# parses assumeyes / external-repo prompts differently on dnf4 vs dnf5, so the
+# shell route created no .repo file on dnf5 (x1yogag9). A literal .repo file is
+# read identically by both. Verified f44 builds — see the COPR-lags-new-Fedora
+# caveat in CLAUDE.md. The tools themselves live in packages.development.common
+# and install in the normal (per-item) dev batch once these repos exist.
+# $releasever / $basearch are expanded by dnf at runtime.
 - name: Add development tool COPR repositories (Fedora)
-  ansible.builtin.yum_repository:
-    name: "copr:copr.fedorainfracloud.org:{{ item.owner }}:{{ item.proj }}"
-    description: "Copr repo for {{ item.proj }} owned by {{ item.owner }}"
-    baseurl: "https://download.copr.fedorainfracloud.org/results/{{ item.owner }}/{{ item.proj }}/fedora-$releasever-$basearch/"
-    gpgcheck: yes
-    gpgkey: "https://download.copr.fedorainfracloud.org/results/{{ item.owner }}/{{ item.proj }}/pubkey.gpg"
-    skip_if_unavailable: yes
-    enabled: yes
+  ansible.builtin.copy:
+    dest: "/etc/yum.repos.d/copr-{{ item.owner }}-{{ item.proj }}.repo"
+    mode: '0644'
+    content: |
+      [copr:copr.fedorainfracloud.org:{{ item.owner }}:{{ item.proj }}]
+      name=Copr repo for {{ item.proj }} owned by {{ item.owner }}
+      baseurl=https://download.copr.fedorainfracloud.org/results/{{ item.owner }}/{{ item.proj }}/fedora-$releasever-$basearch/
+      type=rpm-md
+      skip_if_unavailable=True
+      gpgcheck=1
+      gpgkey=https://download.copr.fedorainfracloud.org/results/{{ item.owner }}/{{ item.proj }}/pubkey.gpg
+      repo_gpgcheck=0
+      enabled=1
+      enabled_metadata=1
   loop:
     - { owner: 'atim', proj: 'lazygit' }
     - { owner: 'atim', proj: 'lazydocker' }

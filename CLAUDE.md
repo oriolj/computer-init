@@ -73,15 +73,19 @@ The project uses a custom `package_map` structure to handle package name differe
 - OS-specific overrides are applied when needed
 - Graceful fallback for unmapped packages
 
-**Using COPR on Fedora is OK.** When a package isn't in Fedora's default repos but a maintained COPR exists, enabling it is the preferred approach (mirrors how AUR is used on Arch). **Enable it by writing the `.repo` file directly with `ansible.builtin.yum_repository`, NOT by shelling out to `dnf copr enable`.** Fedora 41+ ships dnf5, whose `copr enable` parses assumeyes (global `dnf -y copr enable`, not `copr enable -y`) and prompts to confirm external repos differently than dnf4 — so the `command: dnf copr enable -y …` route enabled the repo on a dnf4 host but silently created nothing on a dnf5 host (cost us a long debug on x1yogag9). `yum_repository` writes the ini file both dnf versions read identically. Pattern:
+**Using COPR on Fedora is OK.** When a package isn't in Fedora's default repos but a maintained COPR exists, enabling it is the preferred approach (mirrors how AUR is used on Arch). **Enable it by writing the `.repo` file directly (a literal `copy`), NOT by shelling out to `dnf copr enable`.** Fedora 41+ ships dnf5, whose `copr enable` parses assumeyes (global `dnf -y copr enable`, not `copr enable -y`) and prompts to confirm external repos differently than dnf4 — so the `command: dnf copr enable -y …` route enabled the repo on a dnf4 host but silently created nothing on a dnf5 host (cost us a long debug on x1yogag9). A static `.repo` file is read identically by dnf4 and dnf5; `$releasever`/`$basearch` are expanded by dnf at runtime. Pattern:
 ```yaml
-- ansible.builtin.yum_repository:
-    name: "copr:copr.fedorainfracloud.org:<owner>:<project>"
-    description: "Copr repo for <project> owned by <owner>"
-    baseurl: "https://download.copr.fedorainfracloud.org/results/<owner>/<project>/fedora-$releasever-$basearch/"
-    gpgcheck: yes
-    gpgkey: "https://download.copr.fedorainfracloud.org/results/<owner>/<project>/pubkey.gpg"
-    skip_if_unavailable: yes
+- ansible.builtin.copy:
+    dest: /etc/yum.repos.d/copr-<owner>-<project>.repo
+    mode: '0644'
+    content: |
+      [copr:copr.fedorainfracloud.org:<owner>:<project>]
+      name=Copr repo for <project> owned by <owner>
+      baseurl=https://download.copr.fedorainfracloud.org/results/<owner>/<project>/fedora-$releasever-$basearch/
+      gpgcheck=1
+      gpgkey=https://download.copr.fedorainfracloud.org/results/<owner>/<project>/pubkey.gpg
+      skip_if_unavailable=True
+      enabled=1
   become: yes
 ```
 Reference tasks: `roles/base/tasks/nerd-fonts-fedora.yml` (aquacash5/nerd-fonts) and `roles/development/tasks/copr-fedora.yml` (atim/lazygit, atim/lazydocker, lihaohong/yazi). (`roles/syncthing/tasks/install-redhat.yml` still uses the old `dnf copr enable` form and should be migrated if it misbehaves on dnf5.)

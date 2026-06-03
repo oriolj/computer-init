@@ -4,23 +4,29 @@
 # builds and fontconfig scriptlets (fc-cache runs on install). Verified
 # populated for f44 — see the COPR-lags-new-Fedora caveat in CLAUDE.md.
 #
-# Write the COPR .repo file directly with yum_repository instead of shelling
-# out to `dnf copr enable`: dnf4 and dnf5 differ in how `copr enable` parses
-# assumeyes and prompts to confirm external repos, so the plugin route enabled
-# the repo on a dnf4 host but silently created nothing on a dnf5 host
-# (x1yogag9). yum_repository just writes the ini file, which both read identically.
+# Write the COPR .repo file directly with `copy` instead of `dnf copr enable`:
+# dnf5 (Fedora 41+) parses that plugin's assumeyes/external-repo prompt
+# differently than dnf4, so the shell route created NO .repo file on a dnf5
+# host (x1yogag9). A literal .repo file is read identically by dnf4 and dnf5.
+# $releasever / $basearch are expanded by dnf at runtime (f44/x86_64 here).
 #
 # Kept self-contained (repo + install here, with update_cache) so a COPR
 # hiccup can't poison the all-or-nothing base package batch.
 - name: Add aquacash5/nerd-fonts COPR repository (Fedora)
-  ansible.builtin.yum_repository:
-    name: "copr:copr.fedorainfracloud.org:aquacash5:nerd-fonts"
-    description: "Copr repo for nerd-fonts owned by aquacash5"
-    baseurl: "https://download.copr.fedorainfracloud.org/results/aquacash5/nerd-fonts/fedora-$releasever-$basearch/"
-    gpgcheck: yes
-    gpgkey: "https://download.copr.fedorainfracloud.org/results/aquacash5/nerd-fonts/pubkey.gpg"
-    skip_if_unavailable: yes
-    enabled: yes
+  ansible.builtin.copy:
+    dest: /etc/yum.repos.d/copr-aquacash5-nerd-fonts.repo
+    mode: '0644'
+    content: |
+      [copr:copr.fedorainfracloud.org:aquacash5:nerd-fonts]
+      name=Copr repo for nerd-fonts owned by aquacash5
+      baseurl=https://download.copr.fedorainfracloud.org/results/aquacash5/nerd-fonts/fedora-$releasever-$basearch/
+      type=rpm-md
+      skip_if_unavailable=True
+      gpgcheck=1
+      gpgkey=https://download.copr.fedorainfracloud.org/results/aquacash5/nerd-fonts/pubkey.gpg
+      repo_gpgcheck=0
+      enabled=1
+      enabled_metadata=1
   become: yes
 
 - name: Install Nerd Fonts from COPR (Fedora)
