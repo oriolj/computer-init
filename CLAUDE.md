@@ -73,7 +73,18 @@ The project uses a custom `package_map` structure to handle package name differe
 - OS-specific overrides are applied when needed
 - Graceful fallback for unmapped packages
 
-**Using COPR on Fedora is OK.** When a package isn't in Fedora's default repos but a maintained COPR exists, enabling it is the preferred approach (mirrors how AUR is used on Arch). Pattern: install `dnf-command(copr)`, then `dnf copr enable -y <owner>/<project>` guarded by `creates: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:<owner>:<project>.repo`, then add the package to the relevant `packages.*.fedora` list. Examples: `roles/syncthing/tasks/install-redhat.yml` (decathorpe/syncthing) and `roles/base/tasks/nerd-fonts-fedora.yml` (aquacash5/nerd-fonts).
+**Using COPR on Fedora is OK.** When a package isn't in Fedora's default repos but a maintained COPR exists, enabling it is the preferred approach (mirrors how AUR is used on Arch). **Enable it by writing the `.repo` file directly with `ansible.builtin.yum_repository`, NOT by shelling out to `dnf copr enable`.** Fedora 41+ ships dnf5, whose `copr enable` parses assumeyes (global `dnf -y copr enable`, not `copr enable -y`) and prompts to confirm external repos differently than dnf4 — so the `command: dnf copr enable -y …` route enabled the repo on a dnf4 host but silently created nothing on a dnf5 host (cost us a long debug on x1yogag9). `yum_repository` writes the ini file both dnf versions read identically. Pattern:
+```yaml
+- ansible.builtin.yum_repository:
+    name: "copr:copr.fedorainfracloud.org:<owner>:<project>"
+    description: "Copr repo for <project> owned by <owner>"
+    baseurl: "https://download.copr.fedorainfracloud.org/results/<owner>/<project>/fedora-$releasever-$basearch/"
+    gpgcheck: yes
+    gpgkey: "https://download.copr.fedorainfracloud.org/results/<owner>/<project>/pubkey.gpg"
+    skip_if_unavailable: yes
+  become: yes
+```
+Reference tasks: `roles/base/tasks/nerd-fonts-fedora.yml` (aquacash5/nerd-fonts) and `roles/development/tasks/copr-fedora.yml` (atim/lazygit, atim/lazydocker, lihaohong/yazi). (`roles/syncthing/tasks/install-redhat.yml` still uses the old `dnf copr enable` form and should be migrated if it misbehaves on dnf5.)
 
 **Keep COPR packages OUT of the shared base batch.** `install-packages-with-mapping.yml` installs everything in one all-or-nothing dnf transaction, so a single unavailable COPR package fails *every* base package with it. Don't add COPR-provided names to `packages.*.fedora`; instead make a self-contained task that (1) enables the COPR, then (2) installs its packages with `update_cache: yes` in the same task — the cache refresh is required because the run's earlier metadata refresh happened before the COPR existed. Wire that task into `main.yml` *after* "Install base packages" (it no longer needs to run first). `nerd-fonts-fedora.yml` is the reference pattern.
 

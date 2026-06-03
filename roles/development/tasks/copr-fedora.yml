@@ -1,22 +1,30 @@
 ---
-# lazygit, lazydocker and yazi aren't in Fedora's default repos. These COPRs
-# carry maintained Fedora 44 builds (verified populated before adopting — see
-# the COPR-lags-new-Fedora caveat in CLAUDE.md). The tools themselves live in
-# packages.development.common and install in the normal batch once enabled.
-- name: Install dnf copr plugin (Fedora)
-  ansible.builtin.dnf:
-    name: 'dnf-command(copr)'
-    state: present
-  become: yes
-
-- name: Enable development tool COPR repositories (Fedora)
-  ansible.builtin.command: "dnf copr enable -y {{ item.owner }}/{{ item.proj }}"
-  args:
-    creates: "/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:{{ item.owner }}:{{ item.proj }}.repo"
+# lazygit, lazydocker and yazi aren't in Fedora's default repos. Write the COPR
+# .repo files directly with yum_repository rather than `dnf copr enable`: the
+# plugin parses assumeyes / external-repo prompts differently on dnf4 vs dnf5,
+# so the shell route enabled repos on dnf4 but silently no-op'd on dnf5
+# (x1yogag9). yum_repository writes the ini file, which both dnf versions read.
+# Verified f44 builds before adopting — see the COPR-lags-new-Fedora caveat
+# in CLAUDE.md. The tools themselves live in packages.development.common and
+# install in the normal (per-item) dev batch once these repos exist.
+- name: Add development tool COPR repositories (Fedora)
+  ansible.builtin.yum_repository:
+    name: "copr:copr.fedorainfracloud.org:{{ item.owner }}:{{ item.proj }}"
+    description: "Copr repo for {{ item.proj }} owned by {{ item.owner }}"
+    baseurl: "https://download.copr.fedorainfracloud.org/results/{{ item.owner }}/{{ item.proj }}/fedora-$releasever-$basearch/"
+    gpgcheck: yes
+    gpgkey: "https://download.copr.fedorainfracloud.org/results/{{ item.owner }}/{{ item.proj }}/pubkey.gpg"
+    skip_if_unavailable: yes
+    enabled: yes
   loop:
     - { owner: 'atim', proj: 'lazygit' }
     - { owner: 'atim', proj: 'lazydocker' }
     - { owner: 'lihaohong', proj: 'yazi' }
   loop_control:
     label: "{{ item.owner }}/{{ item.proj }}"
+  become: yes
+
+- name: Refresh dnf metadata after adding COPRs (Fedora)
+  ansible.builtin.dnf:
+    update_cache: yes
   become: yes
