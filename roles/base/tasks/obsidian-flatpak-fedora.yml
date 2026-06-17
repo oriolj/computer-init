@@ -1,0 +1,24 @@
+---
+# Obsidian on Fedora: install from Flathub (not in Fedora's default repos),
+# version-independent and not tied to a COPR maintainer.
+- name: Install flatpak (Fedora)
+  ansible.builtin.dnf:
+    name: flatpak
+    state: present
+  become: yes
+
+- name: Add Flathub remote (Fedora)
+  community.general.flatpak_remote:
+    name: flathub
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+    method: system
+    state: present
+  become: yes
+
+- name: Install Obsidian from Flathub (Fedora)
+  community.general.flatpak:
+    name: md.obsidian.Obsidian
+    remote: flathub
+    method: system
+    state: present
+  become: yes

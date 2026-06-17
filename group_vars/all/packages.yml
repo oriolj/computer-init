@@ -71,6 +71,7 @@ packages:
       - libheif
       - vlc
       - flameshot
+      - thunderbird
     arch:
       - base-devel
       - net-tools

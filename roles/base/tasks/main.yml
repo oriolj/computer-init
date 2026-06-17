@@ -43,6 +43,10 @@
   include_tasks: localsend-flatpak-fedora.yml
   when: ansible_os_family == 'RedHat'
 
+- name: Install Obsidian via Flathub (Fedora)
+  include_tasks: obsidian-flatpak-fedora.yml
+  when: ansible_os_family == 'RedHat'
+
 - name: Install Nerd Fonts via COPR (Fedora)
   include_tasks: nerd-fonts-fedora.yml
   when: ansible_os_family == 'RedHat'
